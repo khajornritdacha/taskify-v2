@@ -7,14 +7,17 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'forest-green-traditional': '#103900ff',
-        'laurel-green': '#92ad94ff',
-        'xanadu': '#748b75ff',
-        'old-burgundy': '#503d42ff',
-        'old-mauve': '#4c2b36ff',
+        'bright-navy-blue': '#2f74c0ff',
+        'arylide-yellow': '#e9d758ff',
+        'orange-red-crayola': '#ff5e5bff',
+        'ghost-white': '#f4f4f9ff',
+        'maximum-blue-green': '#32C3CD',
       },
       fontFamily: {
-        'karla': ['Karla', 'sans-serif'],
+        'neucha': ['Neucha', 'cursive'],
+      },
+      boxShadow: {
+        'todo': '0 0 5px black'
       }
     },
   },
