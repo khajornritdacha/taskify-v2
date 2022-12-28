@@ -1,7 +1,7 @@
 const Navbar = () => {
   return (
-    <nav className="flex content-center bg-forest-green-traditional px-24 py-6 text-white">
-      <li className="mr-auto list-none text-3xl font-bold">
+    <nav className="flex content-center px-24 py-6 text-ghost-white">
+      <li className="mr-auto list-none text-3xl">
         <a href="https://google.com">Taskify</a>
       </li>
       <li className="list-none self-center text-xl">
