@@ -1,6 +1,7 @@
-import NavBtn from './components/NavBtn';
+import NavBtn from './components/Layout';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import MainPage from './components/MainPage';
+import LoginPage from './components/LoginPage';
 
 export default function App() {
   return (
@@ -8,6 +9,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<NavBtn />}>
           <Route index element={<MainPage />} />
+          <Route path="login" element={<LoginPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
