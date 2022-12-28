@@ -1,17 +1,15 @@
-import InputBox from './components/InputBox';
-import Task from './components/Task';
+import NavBtn from './components/NavBtn';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import MainPage from './components/MainPage';
 
 export default function App() {
   return (
-    <main className="flex min-h-screen flex-col bg-bright-navy-blue font-neucha">
-      <a
-        className="mt-8 list-none self-center text-5xl text-ghost-white"
-        href="#"
-      >
-        Taskify V2
-      </a>
-      <InputBox />
-      <Task />
-    </main>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<NavBtn />}>
+          <Route index element={<MainPage />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
