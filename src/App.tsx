@@ -1,4 +1,3 @@
-import Navbar from './components/Navbar';
 import InputBox from './components/InputBox';
 import Task from './components/Task';
 
