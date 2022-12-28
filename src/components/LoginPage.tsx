@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const LoginPage = () => {
   const [email, setEmail] = useState<string>('');
@@ -36,10 +37,16 @@ const LoginPage = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <button className="mx-auto w-[50%] rounded-full bg-ghost-white py-4 text-xl">
+        <button className="mx-auto w-[50%] rounded-full bg-ghost-white py-4 text-xl hover:scale-[1.1]">
           Login!
         </button>
       </form>
+      <Link
+        to="/register"
+        className="mt-[1.5rem] self-center underline hover:scale-[1.3]"
+      >
+        Sign Up
+      </Link>
     </>
   );
 };
