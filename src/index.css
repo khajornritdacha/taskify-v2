@@ -1,4 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import url('https://fonts.googleapis.com/css2?family=Neucha&display=swap');
+
+@font-face {
+    font-family: 'Neucha';
+    src: url('./assets/fonts/Neucha-Regular.ttf');
+}
