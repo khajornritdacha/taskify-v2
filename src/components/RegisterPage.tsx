@@ -20,8 +20,6 @@ const RegisterPage = () => {
       return;
     }
 
-    console.log(import.meta.env.VITE_BASE_URL);
-
     setIsSubmitting(true);
     try {
       const response = await api.post(
