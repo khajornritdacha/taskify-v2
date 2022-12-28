@@ -1,7 +1,11 @@
+import Navbar from './components/Navbar';
+import InputBox from './components/InputBox';
+
 export default function App() {
   return (
-    <h1 className="text-3xl flex border-spacing-1 font-bold underline">
-      Hello world!
-    </h1>
-  )
+    <main className="min-h-screen bg-laurel-green font-karla">
+      <Navbar />
+      <InputBox />
+    </main>
+  );
 }
