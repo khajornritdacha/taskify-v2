@@ -15,6 +15,9 @@ module.exports = {
       },
       fontFamily: {
         'neucha': ['Neucha', 'cursive'],
+      },
+      boxShadow: {
+        'todo': '0 0 5px black'
       }
     },
   },
