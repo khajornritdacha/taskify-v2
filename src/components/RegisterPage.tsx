@@ -1,18 +1,57 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { api } from '../utils/axios';
 
 const RegisterPage = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [conPassword, setConPassword] = useState<string>('');
+  const [errMsg, setErrMsg] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     console.log(email, password, conPassword);
+
+    if (isSubmitting) return;
+
+    if (password !== conPassword) {
+      setErrMsg('Password does not match');
+      return;
+    }
+
+    console.log(import.meta.env.VITE_BASE_URL);
+
+    setIsSubmitting(true);
+    try {
+      const response = await api.post(
+        '/auth/register',
+        {
+          email,
+          password,
+        },
+        {
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true,
+        }
+      );
+
+      // Todo: Pop up banner to let user know if they register succesfully
+      console.log('Register Successfully');
+
+      setErrMsg('');
+      setEmail('');
+      setPassword('');
+      setConPassword('');
+      setIsSubmitting(false);
+    } catch (err) {
+      setErrMsg('Something went wrong!');
+    }
   };
 
   return (
     <>
+      {errMsg && <p>{errMsg}</p>}
       <h1 className="mt-[2rem] self-center text-3xl font-bold text-ghost-white">
         Create An Account
       </h1>
@@ -47,7 +86,10 @@ const RegisterPage = () => {
           value={conPassword}
           onChange={(e) => setConPassword(e.target.value)}
         />
-        <button className="mx-auto w-[50%] rounded-full bg-ghost-white py-4 text-xl hover:scale-[1.1]">
+        <button
+          className="mx-auto w-[50%] rounded-full bg-ghost-white py-4 text-xl hover:scale-[1.1]"
+          disabled={isSubmitting}
+        >
           Sign Up!
         </button>
       </form>
