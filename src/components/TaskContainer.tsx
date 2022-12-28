@@ -1,5 +1,6 @@
 import { Droppable } from 'react-beautiful-dnd';
 import SingleTask from './SingleTask';
+import { useStrictDroppable } from '../hooks/UseStrictDroppable';
 
 interface Props {
   tasks: string[];
@@ -11,11 +12,13 @@ interface Props {
 }
 
 const TaskContainer: React.FC<Props> = ({ tasks, isCompleted, todos, setTodos, completedTodos, setCompletedTodos }) => {
-  return (
-    <Droppable droppableId={isCompleted ? `CompletedTodosList` : `UnCompletedTodosList`}>
+  const [enabled] = useStrictDroppable(false);
+
+  return <div className="container">
+    {enabled && <Droppable droppableId={isCompleted ? `CompletedTodosList` : `UnCompletedTodosList`}>
       {(provided) => (
         <div
-          className={`h-fit min-w-[85%] rounded-lg ${
+          className={`h-fit min-w-[95%] rounded-lg ${
             !isCompleted ? 'bg-maximum-blue-green' : 'bg-orange-red-crayola'
           }`} ref={provided.innerRef} {...provided.droppableProps}
         >
@@ -28,8 +31,8 @@ const TaskContainer: React.FC<Props> = ({ tasks, isCompleted, todos, setTodos, c
           {provided.placeholder}
         </div>
       )}
-    </Droppable>
-  );
+    </Droppable>}
+  </div>
 };
 
 export default TaskContainer;

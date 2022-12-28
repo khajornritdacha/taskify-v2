@@ -10,7 +10,7 @@ export default function App() {
 
   const handleAdd = (event: React.FormEvent) => {
     event.preventDefault();
-    if (todo != "") {
+    if (todo !== "") {
       setTodos([...todos, todo]);
       setTodo("");
     }
@@ -31,7 +31,7 @@ export default function App() {
       tmp = currentTodos[source.index];
       currentTodos.splice(source.index, 1);
     }
-    else if (source.droppableId === 'CompletedTodosList') {
+    else {
       tmp = currentCompletedTodos[source.index];
       currentCompletedTodos.splice(source.index, 1);
     }

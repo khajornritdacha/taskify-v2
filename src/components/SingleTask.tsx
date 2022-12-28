@@ -66,7 +66,7 @@ const SingleTask: React.FC<Props> = ({ index, task, isCompleted, todos, setTodos
   }, [isEditing]);
 
   return (
-    <Draggable draggableId={task} index={index}>
+    <Draggable key={task} draggableId={task} index={index}>
       {(provided) => (
         <form onSubmit={handleEdit} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef}>
           <div className="my-4 mx-4 flex h-20 rounded-lg bg-[url('https://img.freepik.com/free-photo/crumpled-yellow-paper-background-close-up_60487-2390.jpg?size=626&ext=jpg')] px-4 text-2xl text-black hover:scale-[1.03] hover:shadow-todo">

@@ -6,3 +6,11 @@
     font-family: 'Neucha';
     src: url('./assets/fonts/Neucha-Regular.ttf');
 }
+
+.container {
+    display: flex;
+    width: 95%;
+    margin-top: 10px;
+    justify-content: space-between;
+    align-items: flex-start;
+}
