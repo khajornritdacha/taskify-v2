@@ -1,17 +1,50 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { api } from '../utils/axios';
 
 const LoginPage = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const [errMsg, setErrMsg] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     console.log(email, password);
+
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+    try {
+      const response = await api.post(
+        '/auth/login',
+        {
+          email,
+          password,
+        },
+        {
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true,
+        }
+      );
+
+      // Todo: Pop up banner to let user know if they register succesfully
+      console.log('Login Successfully');
+
+      console.log(response.data);
+
+      setErrMsg('');
+      setEmail('');
+      setPassword('');
+      setIsSubmitting(false);
+    } catch (err) {
+      setErrMsg('Something went wrong!');
+    }
   };
 
   return (
     <>
+      {errMsg && <p>{errMsg}</p>}
       <h1 className="mt-[2rem] self-center text-3xl font-bold text-ghost-white">
         Login To Your Account
       </h1>
@@ -37,7 +70,10 @@ const LoginPage = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <button className="mx-auto w-[50%] rounded-full bg-ghost-white py-4 text-xl hover:scale-[1.1]">
+        <button
+          className="mx-auto w-[50%] rounded-full bg-ghost-white py-4 text-xl hover:scale-[1.1]"
+          disabled={isSubmitting}
+        >
           Login!
         </button>
       </form>
