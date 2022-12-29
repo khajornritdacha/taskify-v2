@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { api } from '../utils/axios';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { useAuth } from '../providers/AuthProvider';
 
 const LoginPage = () => {
+  const navigate = useNavigate();
+  const { login, isLoggedIn } = useAuth();
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [errMsg, setErrMsg] = useState<string>('');
@@ -10,38 +12,22 @@ const LoginPage = () => {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    console.log(email, password);
+    // console.log(email, password);
 
     if (isSubmitting) return;
 
     setIsSubmitting(true);
     try {
-      const response = await api.post(
-        '/auth/login',
-        {
-          email,
-          password,
-        },
-        {
-          headers: { 'Content-Type': 'application/json' },
-          withCredentials: true,
-        }
-      );
-
+      await login(email, password);
       // Todo: Pop up banner to let user know if they register succesfully
       console.log('Login Successfully');
-
-      console.log(response.data);
-
-      setErrMsg('');
-      setEmail('');
-      setPassword('');
-      setIsSubmitting(false);
+      navigate('/');
     } catch (err) {
       setErrMsg('Something went wrong!');
     }
   };
 
+  if (isLoggedIn) return <Navigate to="/" />;
   return (
     <>
       {errMsg && <p>{errMsg}</p>}
