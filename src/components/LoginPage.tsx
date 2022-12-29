@@ -22,9 +22,14 @@ const LoginPage = () => {
       // Todo: Pop up banner to let user know if they register succesfully
       console.log('Login Successfully');
       navigate('/');
-    } catch (err) {
-      setErrMsg('Something went wrong!');
+    } catch (err: unknown) {
+      if (typeof err === 'string') {
+        setErrMsg(err);
+      } else {
+        setErrMsg('Unknown Error');
+      }
     }
+    setIsSubmitting(false);
   };
 
   if (isLoggedIn) return <Navigate to="/" />;
