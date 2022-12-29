@@ -26,27 +26,56 @@ const AuthProvider = (props: AuthProviderProps) => {
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await api.post(
-        '/auth/login',
+      // const response = await api.post(
+      //   '/auth/login',
+      //   {
+      //     data: {
+      //       email,
+      //       password,
+      //     },
+      //   },
+      //   {
+      //     headers: { 'Content-Type': 'application/json' },
+      //     withCredentials: true,
+      //   }
+      // );
+      let response = await fetch(
+        `${import.meta.env.VITE_BASE_URL}/auth/login`,
         {
-          email,
-          password,
-        },
-        {
-          headers: { 'Content-Type': 'application/json' },
-          withCredentials: true,
+          method: 'POST',
+          credentials: 'include',
+          body: JSON.stringify({
+            email,
+            password,
+          }),
+          headers: {
+            'Content-Type': 'application/json',
+          },
         }
       );
-      localStorage.setItem('token', response.data?.accessToken);
+
+      if (!response.ok) {
+        const err = (await response.json())?.message;
+        throw err;
+      }
+
+      const data = await response.json();
+
+      localStorage.setItem('token', data.data?.accessToken);
       setIsLoggedIn(true);
     } catch (err) {
+      console.log(err);
+      if (typeof err === 'string') {
+        throw err;
+      }
+
       // Todo: Improve error throwing
-      throw new Error('Unknown Error');
+      throw 'Unknown Error';
     }
   };
 
   const logout = () => {
-    // Todo: Remove cookie when user logout
+    // Todo: Remove refresh token when user logout
     localStorage.removeItem('token');
     setIsLoggedIn(false);
   };
