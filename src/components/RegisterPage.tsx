@@ -1,8 +1,12 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, Navigate } from 'react-router-dom';
 import { api } from '../utils/axios';
+import axios from 'axios';
+import { useAuth } from '../providers/AuthProvider';
 
 const RegisterPage = () => {
+  const navigate = useNavigate();
+  const { isLoggedIn } = useAuth();
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [conPassword, setConPassword] = useState<string>('');
@@ -37,16 +41,20 @@ const RegisterPage = () => {
       // Todo: Pop up banner to let user know if they register succesfully
       console.log('Register Successfully');
 
-      setErrMsg('');
-      setEmail('');
-      setPassword('');
-      setConPassword('');
-      setIsSubmitting(false);
+      navigate('/login');
     } catch (err) {
-      setErrMsg('Something went wrong!');
+      if (axios.isAxiosError(err)) {
+        const { response } = err;
+        const message = response?.data?.message;
+        setErrMsg(message);
+      } else {
+        setErrMsg('Something went wrong!');
+      }
     }
+    setIsSubmitting(false);
   };
 
+  if (isLoggedIn) return <Navigate to="/" />;
   return (
     <>
       {errMsg && <p>{errMsg}</p>}
