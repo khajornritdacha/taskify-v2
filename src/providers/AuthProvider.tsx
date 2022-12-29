@@ -1,5 +1,6 @@
 import { createContext, ReactNode, useContext, useState } from 'react';
 import { api } from '../utils/axios';
+import axios from 'axios';
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -22,7 +23,7 @@ export const useAuth = () => {
 const AuthProvider = (props: AuthProviderProps) => {
   const { children } = props;
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  // const [token, setToken] = useState("");
+  const [token, setToken] = useState('');
 
   const login = async (email: string, password: string) => {
     try {
@@ -61,7 +62,7 @@ const AuthProvider = (props: AuthProviderProps) => {
 
       const data = await response.json();
 
-      localStorage.setItem('token', data.data?.accessToken);
+      setToken(data?.accessToken);
       setIsLoggedIn(true);
     } catch (err) {
       console.log(err);
@@ -74,10 +75,27 @@ const AuthProvider = (props: AuthProviderProps) => {
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
     // Todo: Remove refresh token when user logout
-    localStorage.removeItem('token');
-    setIsLoggedIn(false);
+    try {
+      const res = await api.post('/auth/logout', { withCredentials: true });
+      // const res = await axios(`${import.meta.env.VITE_BASE_URL}/auth/logout`, {
+      //   method: 'post',
+      //   withCredentials: true,
+      // });
+      console.log(res);
+      setToken('');
+      setIsLoggedIn(false);
+    } catch (err) {
+      // Todo Add notification
+      if (axios.isAxiosError(err)) {
+        const { response } = err;
+        const message = response?.data?.message;
+        console.log(message);
+      } else {
+        console.log('Something went wrong!');
+      }
+    }
   };
 
   return (
