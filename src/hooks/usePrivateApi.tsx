@@ -13,7 +13,7 @@ const usePrivateApi = () => {
   useEffect(() => {
     console.log('API interceptors');
     const requestIntercept = api.interceptors.request.use(
-      async (config: AxiosRequestConfig) => {
+      async (config: any) => {
         if (!token) return config;
         return {
           ...config,
