@@ -10,6 +10,16 @@ const MainPage = () => {
   const [todos, setTodos] = useState<string[]>([]);
   const [completedTodos, setCompletedTodos] = useState<string[]>([]);
   const { logout, getToken } = useAuth();
+  const api = usePrivateApi();
+
+  const addTodo = async () => {
+    const res = await api.post('/api/todos', {
+      todoText: 'hello world',
+      isDone: false,
+    });
+
+    console.log(res);
+  };
   // const api = usePrivateApi();
 
   const handleAdd = (event: React.FormEvent) => {
@@ -76,6 +86,12 @@ const MainPage = () => {
         onClick={logout}
       >
         logout
+      </button>
+      <button
+        className="mx-auto mt-2 max-w-fit rounded-full bg-ghost-white p-3"
+        onClick={addTodo}
+      >
+        addTodo
       </button>
     </>
   );
