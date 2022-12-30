@@ -8,10 +8,11 @@ interface AuthProviderProps {
 }
 
 interface IAuthContext {
+  token: string;
   isLoggedIn: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
-  refreshToken: () => Promise<void>;
+  getToken: () => Promise<void>;
 }
 
 const AuthContext = createContext<IAuthContext | null>(null);
@@ -27,10 +28,11 @@ const AuthProvider = (props: AuthProviderProps) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [token, setToken] = useState('');
 
-  const refreshToken = async () => {
+  const getToken = async () => {
     try {
       const res = await api.post('/auth/token');
       const accessToken = res?.data?.accessToken;
+      console.log(accessToken);
       setToken(accessToken);
     } catch (err) {
       console.log('Refresh Token Error');
@@ -49,12 +51,8 @@ const AuthProvider = (props: AuthProviderProps) => {
       setToken(accessToken);
       setIsLoggedIn(true);
     } catch (err) {
-      console.log(err);
-      if (typeof err === 'string') {
-        throw err;
-      }
-
       // Todo: Improve error throwing
+      console.log(err);
       throw 'Unknown Error';
     }
   };
@@ -80,7 +78,9 @@ const AuthProvider = (props: AuthProviderProps) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, logout, login, refreshToken }}>
+    <AuthContext.Provider
+      value={{ isLoggedIn, logout, login, getToken, token }}
+    >
       {children}
     </AuthContext.Provider>
   );

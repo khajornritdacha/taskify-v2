@@ -3,7 +3,7 @@ import Task from './Task';
 import { useAuth } from '../providers/AuthProvider';
 
 const MainPage = () => {
-  const { logout, refreshToken } = useAuth();
+  const { logout, getToken } = useAuth();
 
   return (
     <>
@@ -11,7 +11,7 @@ const MainPage = () => {
       <Task />
       <button
         className="mx-auto mt-2 max-w-fit rounded-full bg-ghost-white p-3"
-        onClick={refreshToken}
+        onClick={getToken}
       >
         Refresh my Token
       </button>
