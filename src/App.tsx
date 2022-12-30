@@ -1,4 +1,4 @@
-import NavBtn from './components/Layout';
+import Layout from './components/Layout';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import MainPage from './components/MainPage';
 import LoginPage from './components/LoginPage';
@@ -10,7 +10,7 @@ export default function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<NavBtn />}>
+          <Route path="/" element={<Layout />}>
             <Route index element={<MainPage />} />
             <Route path="login" element={<LoginPage />} />
             <Route path="register" element={<RegisterPage />} />

@@ -1,7 +1,7 @@
 import { Outlet, Link } from 'react-router-dom';
 import { useAuth } from '../providers/AuthProvider';
 
-const NavBtn = () => {
+const Layout = () => {
   const { isLoggedIn, logout } = useAuth();
 
   return (
@@ -33,4 +33,4 @@ const NavBtn = () => {
   );
 };
 
-export default NavBtn;
+export default Layout;
