@@ -7,10 +7,8 @@
     src: url('./assets/fonts/Neucha-Regular.ttf');
 }
 
-.container {
-    display: flex;
-    width: 95%;
-    margin-top: 10px;
-    justify-content: space-between;
-    align-items: flex-start;
+@layer {
+    .container {
+        @apply flex w-[95%] mt-[10px] justify-between items-start;
+    }
 }
