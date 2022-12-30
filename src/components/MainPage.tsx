@@ -9,7 +9,7 @@ const MainPage = () => {
   const [todo, setTodo] = useState<string>('');
   const [todos, setTodos] = useState<string[]>([]);
   const [completedTodos, setCompletedTodos] = useState<string[]>([]);
-  // const { logout, getToken } = useAuth();
+  const { logout, getToken } = useAuth();
   // const api = usePrivateApi();
 
   const handleAdd = (event: React.FormEvent) => {
@@ -67,13 +67,13 @@ const MainPage = () => {
       </DragDropContext>
       <button
         className="mx-auto mt-2 max-w-fit rounded-full bg-ghost-white p-3"
-        // onClick={getToken}
+        onClick={getToken}
       >
         Refresh my Token
       </button>
       <button
         className="mx-auto mt-2 max-w-fit rounded-full bg-ghost-white p-3"
-        // onClick={logout}
+        onClick={logout}
       >
         logout
       </button>
