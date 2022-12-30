@@ -10,7 +10,8 @@ interface AuthProviderProps {
 interface IAuthContext {
   isLoggedIn: boolean;
   login: (email: string, password: string) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
+  refreshToken: () => Promise<void>;
 }
 
 const AuthContext = createContext<IAuthContext | null>(null);
@@ -25,6 +26,18 @@ const AuthProvider = (props: AuthProviderProps) => {
   const { children } = props;
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [token, setToken] = useState('');
+
+  const refreshToken = async () => {
+    try {
+      const res = await api.post('/auth/token');
+      const accessToken = res?.data?.accessToken;
+      setToken(accessToken);
+    } catch (err) {
+      console.log('Refresh Token Error');
+      setIsLoggedIn(false);
+      setToken('');
+    }
+  };
 
   const login = async (email: string, password: string) => {
     try {
@@ -67,7 +80,7 @@ const AuthProvider = (props: AuthProviderProps) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, logout, login }}>
+    <AuthContext.Provider value={{ isLoggedIn, logout, login, refreshToken }}>
       {children}
     </AuthContext.Provider>
   );

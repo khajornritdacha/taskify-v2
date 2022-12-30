@@ -3,9 +3,7 @@ import Task from './Task';
 import { useAuth } from '../providers/AuthProvider';
 
 const MainPage = () => {
-  const { logout } = useAuth();
-
-  const refreshToken = async () => {};
+  const { logout, refreshToken } = useAuth();
 
   return (
     <>
