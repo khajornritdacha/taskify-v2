@@ -1,7 +1,9 @@
-import axios from "axios";
+import axios from 'axios';
+// const BASE_URL = 'http://localhost:4000';
+const BASE_URL = 'https://taskify-backend-production.up.railway.app';
 
 export const api = axios.create({
-    baseURL: import.meta.env.VITE_BASE_URL,
-    timeout: 10000
+    baseURL: BASE_URL,
+    headers: { 'Content-Type': 'application/json' },
+    withCredentials: true
 });
-

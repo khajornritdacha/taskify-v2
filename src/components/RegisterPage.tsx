@@ -26,17 +26,10 @@ const RegisterPage = () => {
 
     setIsSubmitting(true);
     try {
-      const response = await api.post(
-        '/auth/register',
-        {
-          email,
-          password,
-        },
-        {
-          headers: { 'Content-Type': 'application/json' },
-          withCredentials: true,
-        }
-      );
+      const response = await api.post('/auth/register', {
+        email,
+        password,
+      });
 
       // Todo: Pop up banner to let user know if they register succesfully
       console.log('Register Successfully');

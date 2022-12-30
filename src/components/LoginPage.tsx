@@ -12,22 +12,16 @@ const LoginPage = () => {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    // console.log(email, password);
 
     if (isSubmitting) return;
 
     setIsSubmitting(true);
     try {
       await login(email, password);
-      // Todo: Pop up banner to let user know if they register succesfully
-      console.log('Login Successfully');
       navigate('/');
-    } catch (err: unknown) {
-      if (typeof err === 'string') {
-        setErrMsg(err);
-      } else {
-        setErrMsg('Unknown Error');
-      }
+    } catch (err) {
+      // Todo: Improve notification for each cases
+      setErrMsg('Unknown Error');
     }
     setIsSubmitting(false);
   };

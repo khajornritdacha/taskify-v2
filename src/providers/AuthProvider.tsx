@@ -1,6 +1,7 @@
 import { createContext, ReactNode, useContext, useState } from 'react';
 import { api } from '../utils/axios';
 import axios from 'axios';
+const LOGIN_URL = '/auth/login';
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -27,42 +28,12 @@ const AuthProvider = (props: AuthProviderProps) => {
 
   const login = async (email: string, password: string) => {
     try {
-      // const response = await api.post(
-      //   '/auth/login',
-      //   {
-      //     data: {
-      //       email,
-      //       password,
-      //     },
-      //   },
-      //   {
-      //     headers: { 'Content-Type': 'application/json' },
-      //     withCredentials: true,
-      //   }
-      // );
-      let response = await fetch(
-        `${import.meta.env.VITE_BASE_URL}/auth/login`,
-        {
-          method: 'POST',
-          credentials: 'include',
-          body: JSON.stringify({
-            email,
-            password,
-          }),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
+      const response = await api.post(
+        LOGIN_URL,
+        JSON.stringify({ email, password })
       );
-
-      if (!response.ok) {
-        const err = (await response.json())?.message;
-        throw err;
-      }
-
-      const data = await response.json();
-
-      setToken(data?.accessToken);
+      const accessToken = response?.data?.accessToken;
+      setToken(accessToken);
       setIsLoggedIn(true);
     } catch (err) {
       console.log(err);
@@ -76,13 +47,10 @@ const AuthProvider = (props: AuthProviderProps) => {
   };
 
   const logout = async () => {
+    // console.log('Logging Out');
     // Todo: Remove refresh token when user logout
     try {
-      const res = await api.post('/auth/logout', { withCredentials: true });
-      // const res = await axios(`${import.meta.env.VITE_BASE_URL}/auth/logout`, {
-      //   method: 'post',
-      //   withCredentials: true,
-      // });
+      const res = await api.post('/auth/logout');
       console.log(res);
       setToken('');
       setIsLoggedIn(false);
