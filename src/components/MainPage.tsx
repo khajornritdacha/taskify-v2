@@ -7,6 +7,7 @@ import useData from '../hooks/useData';
 
 const MainPage = () => {
   const [todo, setTodo] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const { logout, getToken, isLoggedIn } = useAuth();
 
   const {
@@ -28,8 +29,10 @@ const MainPage = () => {
   const handleAdd = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!todo) return;
+    setIsSubmitting(true);
     await addData(todo);
     setTodo('');
+    setIsSubmitting(false);
   };
 
   // Todo: Migrate onDragEnd to its own file
@@ -66,7 +69,12 @@ const MainPage = () => {
   return (
     <>
       <DragDropContext onDragEnd={onDragEnd}>
-        <InputBox todo={todo} setTodo={setTodo} handleAdd={handleAdd} />
+        <InputBox
+          todo={todo}
+          setTodo={setTodo}
+          handleAdd={handleAdd}
+          isSubmitting={isSubmitting}
+        />
         <Task
           todos={todos}
           setTodos={setTodos}
