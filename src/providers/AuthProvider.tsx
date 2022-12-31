@@ -12,7 +12,7 @@ interface IAuthContext {
   isLoggedIn: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
-  getToken: () => Promise<void>;
+  getToken: () => Promise<string | undefined>;
 }
 
 const AuthContext = createContext<IAuthContext | null>(null);
@@ -32,8 +32,15 @@ const AuthProvider = (props: AuthProviderProps) => {
     try {
       const res = await api.post('/auth/token');
       const accessToken = res?.data?.accessToken;
-      console.log(accessToken);
+
+      console.log('AccessToken: ', accessToken);
+      if (!accessToken) {
+        throw new Error('Invalid Token');
+      }
+
       setToken(accessToken);
+      setIsLoggedIn(true);
+      return accessToken;
     } catch (err) {
       console.log('Refresh Token Error');
       setIsLoggedIn(false);
