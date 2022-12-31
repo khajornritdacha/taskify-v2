@@ -1,35 +1,38 @@
 import InputBox from './InputBox';
 import Task from './Task';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import { useAuth } from '../providers/AuthProvider';
-import usePrivateApi from '../hooks/usePrivateApi';
 import useData from '../hooks/useData';
 
 const MainPage = () => {
   const [todo, setTodo] = useState<string>('');
   const { logout, getToken, isLoggedIn } = useAuth();
-  const { todos, setTodos, completedTodos, setCompletedTodos } = useData();
-  const api = usePrivateApi();
 
-  // Todo: Refresh only when data is changed
-  // console.log('Page Reloaded');
+  const {
+    todos,
+    setTodos,
+    completedTodos,
+    setCompletedTodos,
+    addData,
+    refreshData,
+  } = useData();
+
+  useEffect(() => {
+    const initializeLogin = async () => {
+      await refreshData();
+    };
+    initializeLogin();
+  }, []);
 
   const handleAdd = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!todo) return;
-    const addTodo = async () => {
-      const res = await api.post('/api/todos', {
-        todoText: todo,
-        isDone: false,
-      });
-      console.log(res);
-    };
-
-    await addTodo();
+    await addData(todo);
     setTodo('');
   };
 
+  // Todo: Migrate onDragEnd to its own file
   const onDragEnd = (result: DropResult) => {
     // const { source, destination } = result;
     // if (destination === null) {
