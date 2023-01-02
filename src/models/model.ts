@@ -1,5 +1,5 @@
 export interface Todo {
   todoText: string;
-  _id: string;
-  __v: number;
+  _id: number;
+  __v?: number;
 }
