@@ -1,6 +1,9 @@
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import { createContext, ReactNode, useContext, useState } from 'react';
+
+import { ErrorDto } from '../models/model';
 import { api } from '../utils/axios';
-import axios, { AxiosResponse, AxiosError } from 'axios';
+
 const LOGIN_URL = '/auth/login';
 
 interface AuthProviderProps {
@@ -67,7 +70,6 @@ const AuthProvider = (props: AuthProviderProps) => {
               'Mount request intercept with accessToken: ',
               accessToken
             );
-            console.log(api);
             return {
               ...config,
               headers: {
@@ -100,9 +102,18 @@ const AuthProvider = (props: AuthProviderProps) => {
       setToken(accessToken);
       setIsLoggedIn(true);
     } catch (err) {
+      if (axios.isAxiosError(err)) {
+        const { response } = err as AxiosError<ErrorDto>;
+        const message = response?.data.message;
+        if (message) throw new Error(message);
+      }
+      throw new Error('Unknown Error');
+
       // Todo: Improve error throwing
-      console.log(err);
-      throw 'Unknown Error';
+      // console.log(
+      //   !!err?.response.data?.message ? err.response.data.message : err
+      // );
+      // throw 'Unknown Error';
     }
   };
 

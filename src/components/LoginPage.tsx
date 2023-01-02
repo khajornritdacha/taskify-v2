@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '../providers/AuthProvider';
+import toast from 'react-hot-toast';
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const { login, isLoggedIn } = useAuth();
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const [errMsg, setErrMsg] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -16,12 +16,19 @@ const LoginPage = () => {
     if (isSubmitting) return;
 
     setIsSubmitting(true);
+    const toastId = toast.loading('Logging In...');
     try {
       await login(email, password);
+      toast.success('Login success', {
+        id: toastId,
+      });
       navigate('/');
     } catch (err) {
-      // Todo: Improve notification for each cases
-      setErrMsg('Unknown Error');
+      if (err instanceof Error) {
+        toast.error(err.message, {
+          id: toastId,
+        });
+      }
     }
     setIsSubmitting(false);
   };
@@ -29,7 +36,6 @@ const LoginPage = () => {
   if (isLoggedIn) return <Navigate to="/" />;
   return (
     <>
-      {errMsg && <p>{errMsg}</p>}
       <h1 className="mt-[2rem] self-center text-3xl font-bold text-ghost-white">
         Login To Your Account
       </h1>
@@ -55,6 +61,7 @@ const LoginPage = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
+        {/* Todo: change color when disabled */}
         <button
           className="mx-auto w-[50%] rounded-full bg-ghost-white py-4 text-xl hover:scale-[1.1]"
           disabled={isSubmitting}
