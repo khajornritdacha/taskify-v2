@@ -1,7 +1,8 @@
 import { createContext, ReactNode, useState } from 'react';
 import { Todo } from '../models/model';
 import { IGetResponse } from '../models/apiModel';
-import usePrivateApi from '../hooks/usePrivateApi';
+import { useAuth } from './AuthProvider';
+import { api } from '../utils/axios';
 
 export const DataContext = createContext<IDataContext | null>(null);
 
@@ -19,19 +20,27 @@ interface IDataContext {
 }
 
 const DataProvider = (props: DataProviderProps) => {
-  const { children } = props;
   const [todos, setTodos] = useState<Todo[]>([]);
   const [completedTodos, setCompletedTodos] = useState<Todo[]>([]);
-  const privateApi = usePrivateApi();
+  // const privateApi = usePrivateApi();
+  const { token, getToken } = useAuth();
+  const { children } = props;
 
   const refreshData = async () => {
-    const res = await privateApi.get<IGetResponse>('/api/todos');
-    setTodos(res.data?.todos);
-    setCompletedTodos(res.data?.toRemoves);
+    try {
+      const res = await api.get<IGetResponse>('/api/todos');
+      setTodos(res.data?.todos);
+      setCompletedTodos(res.data?.toRemoves);
+    } catch (err) {
+      console.log('Refresh data err');
+      console.log(err);
+      setTodos([]);
+      setCompletedTodos([]);
+    }
   };
 
   const addData = async (todo: string) => {
-    const res = await privateApi.post('/api/todos', {
+    const res = await api.post('/api/todos', {
       todoText: todo,
       isDone: false,
     });

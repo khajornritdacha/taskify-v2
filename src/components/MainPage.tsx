@@ -14,6 +14,7 @@ const MainPage = () => {
 
   useEffect(() => {
     const initializeLogin = async () => {
+      await getToken();
       await refreshData();
     };
     initializeLogin();
@@ -78,7 +79,10 @@ const MainPage = () => {
       </button>
       <button
         className="mx-auto mt-2 max-w-fit rounded-full bg-ghost-white p-3"
-        onClick={logout}
+        onClick={async () => {
+          await logout();
+          await refreshData();
+        }}
       >
         logout
       </button>

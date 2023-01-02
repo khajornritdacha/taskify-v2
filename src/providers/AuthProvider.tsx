@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useContext, useState } from 'react';
 import { api } from '../utils/axios';
-import axios from 'axios';
+import axios, { AxiosResponse, AxiosError } from 'axios';
 const LOGIN_URL = '/auth/login';
 
 interface AuthProviderProps {
@@ -28,6 +28,9 @@ const AuthProvider = (props: AuthProviderProps) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [token, setToken] = useState('');
 
+  let responseIntercept: number;
+  let requestIntercept: number;
+
   const getToken = async () => {
     try {
       const res = await api.post('/auth/token');
@@ -37,6 +40,41 @@ const AuthProvider = (props: AuthProviderProps) => {
       if (!accessToken) {
         throw new Error('Invalid Token');
       }
+
+      api.interceptors.response.eject(responseIntercept);
+      responseIntercept = api.interceptors.response.use(
+        (res: AxiosResponse) => res,
+        async (err: any) => {
+          const prevRequest = err?.config;
+          console.log('Mount response intercept');
+          if (!prevRequest?.sent) {
+            prevRequest.sent = true;
+            console.log('Send Request again with: ', accessToken);
+            prevRequest.headers['Authorization'] = `Bearer ${accessToken}`;
+            return api(prevRequest);
+          }
+          return Promise.reject(err);
+        }
+      );
+
+      api.interceptors.request.eject(requestIntercept);
+      requestIntercept = api.interceptors.request.use(
+        async (config: any) => {
+          if (!accessToken) return config;
+          console.log(
+            'Mount request intercept with accessToken: ',
+            accessToken
+          );
+          return {
+            ...config,
+            headers: {
+              ...config.headers,
+              Authorization: `Bearer ${accessToken}`,
+            },
+          };
+        },
+        (err: AxiosError) => Promise.reject(err)
+      );
 
       setToken(accessToken);
       setIsLoggedIn(true);
@@ -69,6 +107,11 @@ const AuthProvider = (props: AuthProviderProps) => {
     // Todo: Remove refresh token when user logout
     try {
       const res = await api.post('/auth/logout');
+
+      api.interceptors.response.eject(responseIntercept);
+      api.interceptors.request.eject(requestIntercept);
+      console.log('Unmount Interceptors');
+
       console.log(res);
       setToken('');
       setIsLoggedIn(false);
