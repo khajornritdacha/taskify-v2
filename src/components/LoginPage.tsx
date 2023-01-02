@@ -1,3 +1,5 @@
+// Todo: Fix why isloggedIn is not true when user already logged in
+
 import { useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '../providers/AuthProvider';
@@ -5,7 +7,7 @@ import toast from 'react-hot-toast';
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const { login, isLoggedIn } = useAuth();
+  const { login, isLoggedIn, token } = useAuth();
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -61,9 +63,8 @@ const LoginPage = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        {/* Todo: change color when disabled */}
         <button
-          className="mx-auto w-[50%] rounded-full bg-ghost-white py-4 text-xl hover:scale-[1.1]"
+          className="mx-auto w-[50%] rounded-full bg-ghost-white py-4 text-xl hover:scale-[1.1] disabled:bg-slate-400"
           disabled={isSubmitting}
         >
           Login!
