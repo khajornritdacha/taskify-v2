@@ -21,7 +21,6 @@ const MainPage = () => {
     const initializeLogin = async () => {
       setIsLoading(true);
       try {
-        await getToken();
         await refreshData();
       } catch (err) {
         console.log('Load data fail');
@@ -76,6 +75,8 @@ const MainPage = () => {
     // setCompletedTodos(currentCompletedTodos);
   };
 
+  console.log('Loggedin status: ', isLoggedIn);
+
   return (
     <>
       {!isLoading ? (
@@ -89,28 +90,28 @@ const MainPage = () => {
             />
             <Task />
           </DragDropContext>
+          <div className="group fixed right-[2vw] bottom-[5vh] flex items-center">
+            {!isLoggedIn ? (
+              <BtnIcon
+                Icon={BiLogInCircle}
+                text={'Log In'}
+                handleClick={() => navigate('/login')}
+              />
+            ) : (
+              <BtnIcon
+                Icon={BiLogOutCircle}
+                text={'Log out'}
+                handleClick={() => handleLogout()}
+                customClass="text-orange-red-crayola"
+              />
+            )}
+          </div>
         </>
       ) : (
         <h1 className="m-auto translate-x-[10%] self-center text-5xl text-ghost-white">
           Loading ...
         </h1>
       )}
-      <div className="group fixed right-[2vw] bottom-[5vh] flex items-center">
-        {!isLoggedIn ? (
-          <BtnIcon
-            Icon={BiLogInCircle}
-            text={'Log In'}
-            handleClick={() => navigate('/login')}
-          />
-        ) : (
-          <BtnIcon
-            Icon={BiLogOutCircle}
-            text={'Log out'}
-            handleClick={() => handleLogout()}
-            customClass="text-orange-red-crayola"
-          />
-        )}
-      </div>
     </>
   );
 };

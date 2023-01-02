@@ -1,6 +1,16 @@
 import { Outlet, Link } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useAuth } from '../providers/AuthProvider';
 
 const Layout = () => {
+  const { getToken } = useAuth();
+  useEffect(() => {
+    async function tryLoginUser() {
+      await getToken();
+    }
+    tryLoginUser();
+  }, []);
+
   return (
     <main className="flex min-h-screen flex-col bg-bright-navy-blue font-neucha">
       <Link
