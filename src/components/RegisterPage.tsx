@@ -3,6 +3,7 @@ import { Link, useNavigate, Navigate } from 'react-router-dom';
 import { api } from '../utils/axios';
 import axios from 'axios';
 import { useAuth } from '../providers/AuthProvider';
+import toast from 'react-hot-toast';
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -10,7 +11,6 @@ const RegisterPage = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [conPassword, setConPassword] = useState<string>('');
-  const [errMsg, setErrMsg] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -20,29 +20,32 @@ const RegisterPage = () => {
     if (isSubmitting) return;
 
     if (password !== conPassword) {
-      setErrMsg('Password does not match');
+      toast.error('Password does not match');
       return;
     }
 
     setIsSubmitting(true);
+    const toastId = toast.loading('Signing up...');
     try {
       const response = await api.post('/auth/register', {
         email,
         password,
       });
 
-      // Todo: Pop up banner to let user know if they register succesfully
-      console.log('Register Successfully');
+      toast.success('Sign up success', {
+        id: toastId,
+      });
 
       navigate('/login');
     } catch (err) {
+      let message = 'Unknown Error';
       if (axios.isAxiosError(err)) {
         const { response } = err;
-        const message = response?.data?.message;
-        setErrMsg(message);
-      } else {
-        setErrMsg('Something went wrong!');
+        message = response?.data?.message && response.data.message;
       }
+      toast.error(message, {
+        id: toastId,
+      });
     }
     setIsSubmitting(false);
   };
@@ -50,7 +53,6 @@ const RegisterPage = () => {
   if (isLoggedIn) return <Navigate to="/" />;
   return (
     <>
-      {errMsg && <p>{errMsg}</p>}
       <h1 className="mt-[2rem] self-center text-3xl font-bold text-ghost-white">
         Create An Account
       </h1>

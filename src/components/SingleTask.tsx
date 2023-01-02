@@ -8,21 +8,9 @@ interface Props {
   index: number;
   task: Todo;
   isCompleted: boolean;
-  todos: Todo[];
-  setTodos: React.Dispatch<React.SetStateAction<Todo[]>>;
-  completedTodos: Todo[];
-  setCompletedTodos: React.Dispatch<React.SetStateAction<Todo[]>>;
 }
 
-const SingleTask: React.FC<Props> = ({
-  index,
-  task,
-  isCompleted,
-  todos,
-  setTodos,
-  completedTodos,
-  setCompletedTodos,
-}) => {
+const SingleTask: React.FC<Props> = ({ index, task, isCompleted }) => {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [editingTodo, setEditingTodo] = useState<Todo>(task);
 

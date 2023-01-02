@@ -3,3 +3,7 @@ export interface Todo {
   _id: number;
   __v?: number;
 }
+
+export interface ErrorDto {
+  message: string;
+}

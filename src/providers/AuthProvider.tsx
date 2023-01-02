@@ -1,6 +1,9 @@
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import { createContext, ReactNode, useContext, useState } from 'react';
+
+import { ErrorDto } from '../models/model';
 import { api } from '../utils/axios';
-import axios from 'axios';
+
 const LOGIN_URL = '/auth/login';
 
 interface AuthProviderProps {
@@ -27,6 +30,8 @@ const AuthProvider = (props: AuthProviderProps) => {
   const { children } = props;
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [token, setToken] = useState('');
+  const [responseIntercept, setResponseIntercept] = useState<number>(0);
+  const [requestIntercept, setRequestIntercept] = useState<number>(0);
 
   const getToken = async () => {
     try {
@@ -37,6 +42,45 @@ const AuthProvider = (props: AuthProviderProps) => {
       if (!accessToken) {
         throw new Error('Invalid Token');
       }
+
+      api.interceptors.response.eject(responseIntercept);
+      setResponseIntercept(
+        api.interceptors.response.use(
+          (res: AxiosResponse) => res,
+          async (err: any) => {
+            const prevRequest = err?.config;
+            console.log('Mount response intercept');
+            if (!prevRequest?.sent) {
+              prevRequest.sent = true;
+              console.log('Send Request again with: ', accessToken);
+              prevRequest.headers['Authorization'] = `Bearer ${accessToken}`;
+              return api(prevRequest);
+            }
+            return Promise.reject(err);
+          }
+        )
+      );
+
+      api.interceptors.request.eject(requestIntercept);
+      setRequestIntercept(
+        api.interceptors.request.use(
+          async (config: any) => {
+            if (!accessToken) return config;
+            console.log(
+              'Mount request intercept with accessToken: ',
+              accessToken
+            );
+            return {
+              ...config,
+              headers: {
+                ...config.headers,
+                Authorization: `Bearer ${accessToken}`,
+              },
+            };
+          },
+          (err: AxiosError) => Promise.reject(err)
+        )
+      );
 
       setToken(accessToken);
       setIsLoggedIn(true);
@@ -58,9 +102,18 @@ const AuthProvider = (props: AuthProviderProps) => {
       setToken(accessToken);
       setIsLoggedIn(true);
     } catch (err) {
+      if (axios.isAxiosError(err)) {
+        const { response } = err as AxiosError<ErrorDto>;
+        const message = response?.data.message;
+        if (message) throw new Error(message);
+      }
+      throw new Error('Unknown Error');
+
       // Todo: Improve error throwing
-      console.log(err);
-      throw 'Unknown Error';
+      // console.log(
+      //   !!err?.response.data?.message ? err.response.data.message : err
+      // );
+      // throw 'Unknown Error';
     }
   };
 
@@ -69,9 +122,16 @@ const AuthProvider = (props: AuthProviderProps) => {
     // Todo: Remove refresh token when user logout
     try {
       const res = await api.post('/auth/logout');
+
+      api.interceptors.response.eject(responseIntercept);
+      api.interceptors.request.eject(requestIntercept);
+      console.log('Unmount Interceptors');
+
       console.log(res);
       setToken('');
       setIsLoggedIn(false);
+      setResponseIntercept(0);
+      setRequestIntercept(0);
     } catch (err) {
       // Todo Add notification
       if (axios.isAxiosError(err)) {
