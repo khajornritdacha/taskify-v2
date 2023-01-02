@@ -4,11 +4,12 @@ import React, { useState, useEffect } from 'react';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import { useAuth } from '../providers/AuthProvider';
 import useData from '../hooks/useData';
+import toast from 'react-hot-toast';
 
 const MainPage = () => {
   const [todo, setTodo] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const { logout, getToken, isLoggedIn } = useAuth();
+  const { logout, getToken } = useAuth();
 
   const { addData, refreshData } = useData();
 
