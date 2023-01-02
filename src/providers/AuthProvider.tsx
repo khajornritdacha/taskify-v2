@@ -27,9 +27,8 @@ const AuthProvider = (props: AuthProviderProps) => {
   const { children } = props;
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [token, setToken] = useState('');
-
-  let responseIntercept: number;
-  let requestIntercept: number;
+  const [responseIntercept, setResponseIntercept] = useState<number>(0);
+  const [requestIntercept, setRequestIntercept] = useState<number>(0);
 
   const getToken = async () => {
     try {
@@ -42,38 +41,43 @@ const AuthProvider = (props: AuthProviderProps) => {
       }
 
       api.interceptors.response.eject(responseIntercept);
-      responseIntercept = api.interceptors.response.use(
-        (res: AxiosResponse) => res,
-        async (err: any) => {
-          const prevRequest = err?.config;
-          console.log('Mount response intercept');
-          if (!prevRequest?.sent) {
-            prevRequest.sent = true;
-            console.log('Send Request again with: ', accessToken);
-            prevRequest.headers['Authorization'] = `Bearer ${accessToken}`;
-            return api(prevRequest);
+      setResponseIntercept(
+        api.interceptors.response.use(
+          (res: AxiosResponse) => res,
+          async (err: any) => {
+            const prevRequest = err?.config;
+            console.log('Mount response intercept');
+            if (!prevRequest?.sent) {
+              prevRequest.sent = true;
+              console.log('Send Request again with: ', accessToken);
+              prevRequest.headers['Authorization'] = `Bearer ${accessToken}`;
+              return api(prevRequest);
+            }
+            return Promise.reject(err);
           }
-          return Promise.reject(err);
-        }
+        )
       );
 
       api.interceptors.request.eject(requestIntercept);
-      requestIntercept = api.interceptors.request.use(
-        async (config: any) => {
-          if (!accessToken) return config;
-          console.log(
-            'Mount request intercept with accessToken: ',
-            accessToken
-          );
-          return {
-            ...config,
-            headers: {
-              ...config.headers,
-              Authorization: `Bearer ${accessToken}`,
-            },
-          };
-        },
-        (err: AxiosError) => Promise.reject(err)
+      setRequestIntercept(
+        api.interceptors.request.use(
+          async (config: any) => {
+            if (!accessToken) return config;
+            console.log(
+              'Mount request intercept with accessToken: ',
+              accessToken
+            );
+            console.log(api);
+            return {
+              ...config,
+              headers: {
+                ...config.headers,
+                Authorization: `Bearer ${accessToken}`,
+              },
+            };
+          },
+          (err: AxiosError) => Promise.reject(err)
+        )
       );
 
       setToken(accessToken);
@@ -115,6 +119,8 @@ const AuthProvider = (props: AuthProviderProps) => {
       console.log(res);
       setToken('');
       setIsLoggedIn(false);
+      setResponseIntercept(0);
+      setRequestIntercept(0);
     } catch (err) {
       // Todo Add notification
       if (axios.isAxiosError(err)) {
