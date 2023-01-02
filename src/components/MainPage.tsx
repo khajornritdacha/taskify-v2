@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import { useAuth } from '../providers/AuthProvider';
 import useData from '../hooks/useData';
+import { onDragEnd } from './DragEnd';
 
 const MainPage = () => {
   const [todo, setTodo] = useState<string>('');
@@ -42,40 +43,9 @@ const MainPage = () => {
     await refreshData();
   };
 
-  // Todo: Migrate onDragEnd to its own file
-  const onDragEnd = (result: DropResult) => {
-    // const { source, destination } = result;
-    // if (destination === null) {
-    //   return;
-    // }
-    // if (
-    //   destination?.droppableId === source.droppableId &&
-    //   destination?.index === source.index
-    // ) {
-    //   return;
-    // }
-    // let tmp: string = '',
-    //   currentTodos = [...todos],
-    //   currentCompletedTodos = [...completedTodos];
-    // if (source.droppableId === 'UnCompletedTodosList') {
-    //   tmp = currentTodos[source.index];
-    //   currentTodos.splice(source.index, 1);
-    // } else {
-    //   tmp = currentCompletedTodos[source.index];
-    //   currentCompletedTodos.splice(source.index, 1);
-    // }
-    // if (destination?.droppableId === 'UnCompletedTodosList') {
-    //   currentTodos.splice(destination.index, 0, tmp);
-    // } else if (destination?.droppableId === 'CompletedTodosList') {
-    //   currentCompletedTodos.splice(destination.index, 0, tmp);
-    // }
-    // setTodos(currentTodos);
-    // setCompletedTodos(currentCompletedTodos);
-  };
-
   return (
     <>
-      <DragDropContext onDragEnd={onDragEnd}>
+      <DragDropContext onDragEnd={(result) => onDragEnd(result, todos, setTodos, completedTodos, setCompletedTodos)}>
         <InputBox
           todo={todo}
           setTodo={setTodo}
