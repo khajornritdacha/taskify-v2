@@ -89,27 +89,6 @@ const MainPage = () => {
             />
             <Task />
           </DragDropContext>
-          <button
-            className="mx-auto mt-2 max-w-fit rounded-full bg-ghost-white p-3"
-            onClick={getToken}
-          >
-            Refresh my Token
-          </button>
-          <button
-            className="mx-auto mt-2 max-w-fit rounded-full bg-ghost-white p-3"
-            onClick={async () => {
-              await logout();
-              await refreshData();
-            }}
-          >
-            logout
-          </button>
-          <button
-            className="mx-auto mt-2 max-w-fit rounded-full bg-ghost-white p-3"
-            onClick={handleAdd}
-          >
-            addTodo
-          </button>{' '}
         </>
       ) : (
         <h1 className="m-auto translate-x-[10%] self-center text-5xl text-ghost-white">
@@ -131,14 +110,6 @@ const MainPage = () => {
             customClass="text-orange-red-crayola"
           />
         )}
-        {/* {isLoggedIn && (
-          <button
-            className={`fixed right-[2vw] bottom-[5vh] h-[4rem] w-[4rem] rounded-full bg-orange-red-crayola text-center text-[4rem] leading-[4rem]`}
-            onClick={logout}
-          >
-            O
-          </button>
-        )} */}
       </div>
     </>
   );
