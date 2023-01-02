@@ -9,14 +9,20 @@ import toast from 'react-hot-toast';
 const MainPage = () => {
   const [todo, setTodo] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const { logout, getToken } = useAuth();
-
   const { addData, refreshData } = useData();
 
   useEffect(() => {
     const initializeLogin = async () => {
-      await getToken();
-      await refreshData();
+      setIsLoading(true);
+      try {
+        await getToken();
+        await refreshData();
+      } catch (err) {
+        console.log('Load data fail');
+      }
+      setIsLoading(false);
     };
     initializeLogin();
   }, []);
@@ -63,36 +69,44 @@ const MainPage = () => {
 
   return (
     <>
-      <DragDropContext onDragEnd={onDragEnd}>
-        <InputBox
-          todo={todo}
-          setTodo={setTodo}
-          handleAdd={handleAdd}
-          isSubmitting={isSubmitting}
-        />
-        <Task />
-      </DragDropContext>
-      <button
-        className="mx-auto mt-2 max-w-fit rounded-full bg-ghost-white p-3"
-        onClick={getToken}
-      >
-        Refresh my Token
-      </button>
-      <button
-        className="mx-auto mt-2 max-w-fit rounded-full bg-ghost-white p-3"
-        onClick={async () => {
-          await logout();
-          await refreshData();
-        }}
-      >
-        logout
-      </button>
-      <button
-        className="mx-auto mt-2 max-w-fit rounded-full bg-ghost-white p-3"
-        onClick={handleAdd}
-      >
-        addTodo
-      </button>
+      {!isLoading ? (
+        <>
+          <DragDropContext onDragEnd={onDragEnd}>
+            <InputBox
+              todo={todo}
+              setTodo={setTodo}
+              handleAdd={handleAdd}
+              isSubmitting={isSubmitting}
+            />
+            <Task />
+          </DragDropContext>
+          <button
+            className="mx-auto mt-2 max-w-fit rounded-full bg-ghost-white p-3"
+            onClick={getToken}
+          >
+            Refresh my Token
+          </button>
+          <button
+            className="mx-auto mt-2 max-w-fit rounded-full bg-ghost-white p-3"
+            onClick={async () => {
+              await logout();
+              await refreshData();
+            }}
+          >
+            logout
+          </button>
+          <button
+            className="mx-auto mt-2 max-w-fit rounded-full bg-ghost-white p-3"
+            onClick={handleAdd}
+          >
+            addTodo
+          </button>{' '}
+        </>
+      ) : (
+        <h1 className="m-auto translate-x-[10%] self-center text-5xl text-ghost-white">
+          Loading ...
+        </h1>
+      )}
     </>
   );
 };
