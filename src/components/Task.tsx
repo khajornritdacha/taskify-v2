@@ -1,40 +1,15 @@
 import TaskContainer from './TaskContainer';
 import { Todo } from '../models/model';
+import useData from '../hooks/useData';
 
-interface Props {
-  todos: Todo[];
-  setTodos: React.Dispatch<React.SetStateAction<Todo[]>>;
-  completedTodos: Todo[];
-  setCompletedTodos: React.Dispatch<React.SetStateAction<Todo[]>>;
-}
-
-const Task = ({
-  todos,
-  setTodos,
-  completedTodos,
-  setCompletedTodos,
-}: Props) => {
-  // let tasks = ['hello', 'how', 'are', 'you'];
+const Task = () => {
+  const { todos, setTodos, completedTodos, setCompletedTodos } = useData();
   return (
     <div className="grid grid-cols-2 justify-items-center px-[3%]">
       {/* <TaskContainer tasks={tasks.slice(0, 3)} isCompleted={false} />
       <TaskContainer tasks={[tasks[3]]} isCompleted={true} /> */}
-      <TaskContainer
-        tasks={todos}
-        isCompleted={false}
-        todos={todos}
-        setTodos={setTodos}
-        completedTodos={completedTodos}
-        setCompletedTodos={setCompletedTodos}
-      />
-      <TaskContainer
-        tasks={completedTodos}
-        isCompleted={true}
-        todos={todos}
-        setTodos={setTodos}
-        completedTodos={completedTodos}
-        setCompletedTodos={setCompletedTodos}
-      />
+      <TaskContainer tasks={todos} isCompleted={false} />
+      <TaskContainer tasks={completedTodos} isCompleted={true} />
     </div>
   );
 };

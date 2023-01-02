@@ -6,22 +6,10 @@ import { Todo } from '../models/model';
 interface Props {
   tasks: Todo[];
   isCompleted: boolean;
-  todos: Todo[];
-  setTodos: React.Dispatch<React.SetStateAction<Todo[]>>;
-  completedTodos: Todo[];
-  setCompletedTodos: React.Dispatch<React.SetStateAction<Todo[]>>;
 }
 
-const TaskContainer: React.FC<Props> = ({
-  tasks,
-  isCompleted,
-  todos,
-  setTodos,
-  completedTodos,
-  setCompletedTodos,
-}) => {
+const TaskContainer: React.FC<Props> = ({ tasks, isCompleted }) => {
   const [enabled] = useStrictDroppable(false);
-
   return (
     <div className="container">
       {enabled && (
@@ -43,13 +31,10 @@ const TaskContainer: React.FC<Props> = ({
               </h1>
               {tasks.map((task, index) => (
                 <SingleTask
+                  key={task._id}
                   index={index}
                   task={task}
                   isCompleted={isCompleted}
-                  todos={todos}
-                  setTodos={setTodos}
-                  completedTodos={completedTodos}
-                  setCompletedTodos={setCompletedTodos}
                 />
               ))}
               {provided.placeholder}

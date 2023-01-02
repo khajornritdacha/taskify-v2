@@ -10,14 +10,7 @@ const MainPage = () => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const { logout, getToken, isLoggedIn } = useAuth();
 
-  const {
-    todos,
-    setTodos,
-    completedTodos,
-    setCompletedTodos,
-    addData,
-    refreshData,
-  } = useData();
+  const { addData, refreshData } = useData();
 
   useEffect(() => {
     const initializeLogin = async () => {
@@ -75,12 +68,7 @@ const MainPage = () => {
           handleAdd={handleAdd}
           isSubmitting={isSubmitting}
         />
-        <Task
-          todos={todos}
-          setTodos={setTodos}
-          completedTodos={completedTodos}
-          setCompletedTodos={setCompletedTodos}
-        />
+        <Task />
       </DragDropContext>
       <button
         className="mx-auto mt-2 max-w-fit rounded-full bg-ghost-white p-3"
