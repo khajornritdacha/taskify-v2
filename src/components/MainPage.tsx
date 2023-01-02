@@ -1,17 +1,21 @@
+import React, { useEffect, useState } from 'react';
+import { DragDropContext, DropResult } from 'react-beautiful-dnd';
+import { useNavigate } from 'react-router-dom';
+
+import { BiLogInCircle, BiLogOutCircle } from 'react-icons/bi';
+import useData from '../hooks/useData';
+import { useAuth } from '../providers/AuthProvider';
 import InputBox from './InputBox';
 import Task from './Task';
-import React, { useState, useEffect } from 'react';
-import { DragDropContext, DropResult } from 'react-beautiful-dnd';
-import { useAuth } from '../providers/AuthProvider';
-import useData from '../hooks/useData';
-import toast from 'react-hot-toast';
+import BtnIcon from './BtnIcon';
 
 const MainPage = () => {
   const [todo, setTodo] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { logout, getToken } = useAuth();
+  const { logout, getToken, isLoggedIn } = useAuth();
   const { addData, refreshData } = useData();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const initializeLogin = async () => {
@@ -34,6 +38,11 @@ const MainPage = () => {
     await addData(todo);
     setTodo('');
     setIsSubmitting(false);
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    await refreshData();
   };
 
   // Todo: Migrate onDragEnd to its own file
@@ -107,6 +116,30 @@ const MainPage = () => {
           Loading ...
         </h1>
       )}
+      <div className="group fixed right-[2vw] bottom-[5vh] flex items-center">
+        {!isLoggedIn ? (
+          <BtnIcon
+            Icon={BiLogInCircle}
+            text={'Log In'}
+            handleClick={() => navigate('/login')}
+          />
+        ) : (
+          <BtnIcon
+            Icon={BiLogOutCircle}
+            text={'Log out'}
+            handleClick={() => handleLogout()}
+            customClass="text-orange-red-crayola"
+          />
+        )}
+        {/* {isLoggedIn && (
+          <button
+            className={`fixed right-[2vw] bottom-[5vh] h-[4rem] w-[4rem] rounded-full bg-orange-red-crayola text-center text-[4rem] leading-[4rem]`}
+            onClick={logout}
+          >
+            O
+          </button>
+        )} */}
+      </div>
     </>
   );
 };
