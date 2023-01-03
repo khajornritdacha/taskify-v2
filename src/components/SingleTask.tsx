@@ -3,6 +3,7 @@ import { Draggable } from 'react-beautiful-dnd';
 import { AiFillDelete, AiFillEdit } from 'react-icons/ai';
 import { MdDone, MdClear } from 'react-icons/md';
 import { Todo } from '../models/model';
+import useData from '../hooks/useData';
 
 interface Props {
   index: number;
@@ -13,45 +14,46 @@ interface Props {
 const SingleTask: React.FC<Props> = ({ index, task, isCompleted }) => {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [editingTodo, setEditingTodo] = useState<Todo>(task);
+  const { todos, setTodos, completedTodos, setCompletedTodos } = useData();
 
   const handleToggleDone = () => {
-    // let currentTodos = [...todos], currentCompletedTodos = [...completedTodos];
-    // if (isCompleted == true) {
-    //   currentCompletedTodos.splice(currentCompletedTodos.indexOf(task), 1);
-    //   currentTodos.push(task);
-    // }
-    // else {
-    //   currentTodos.splice(currentTodos.indexOf(task), 1);
-    //   currentCompletedTodos.push(task);
-    // }
-    // setTodos(currentTodos);
-    // setCompletedTodos(currentCompletedTodos);
+    let currentTodos = [...todos],
+      currentCompletedTodos = [...completedTodos];
+    if (isCompleted == true) {
+      currentCompletedTodos.splice(currentCompletedTodos.indexOf(task), 1);
+      currentTodos.push(task);
+    } else {
+      currentTodos.splice(currentTodos.indexOf(task), 1);
+      currentCompletedTodos.push(task);
+    }
+    setTodos(currentTodos);
+    setCompletedTodos(currentCompletedTodos);
   };
 
   const handleDelete = () => {
-    // let currentTodos = [...todos],
-    //   currentCompletedTodos = [...completedTodos];
-    // if (isCompleted == true) {
-    //   currentCompletedTodos.splice(currentCompletedTodos.indexOf(task), 1);
-    // } else {
-    //   currentTodos.splice(currentTodos.indexOf(task), 1);
-    // }
-    // setTodos(currentTodos);
-    // setCompletedTodos(currentCompletedTodos);
+    let currentTodos = [...todos],
+      currentCompletedTodos = [...completedTodos];
+    if (isCompleted == true) {
+      currentCompletedTodos.splice(currentCompletedTodos.indexOf(task), 1);
+    } else {
+      currentTodos.splice(currentTodos.indexOf(task), 1);
+    }
+    setTodos(currentTodos);
+    setCompletedTodos(currentCompletedTodos);
   };
 
   const handleEdit = (event: React.FormEvent) => {
     event.preventDefault();
-    // let currentTodos = [...todos],
-    //   currentCompletedTodos = [...completedTodos];
-    // if (isCompleted == true) {
-    //   currentCompletedTodos[currentCompletedTodos.indexOf(task)] = editingTodo;
-    // } else {
-    //   currentTodos[currentTodos.indexOf(task)] = editingTodo;
-    // }
-    // setIsEditing(false);
-    // setTodos(currentTodos);
-    // setCompletedTodos(currentCompletedTodos);
+    let currentTodos = [...todos],
+      currentCompletedTodos = [...completedTodos];
+    if (isCompleted == true) {
+      currentCompletedTodos[currentCompletedTodos.indexOf(task)] = editingTodo;
+    } else {
+      currentTodos[currentTodos.indexOf(task)] = editingTodo;
+    }
+    setIsEditing(false);
+    setTodos(currentTodos);
+    setCompletedTodos(currentCompletedTodos);
   };
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -60,7 +62,7 @@ const SingleTask: React.FC<Props> = ({ index, task, isCompleted }) => {
   }, [isEditing]);
 
   return (
-    <Draggable key={task._id} draggableId={task._id} index={index}>
+    <Draggable key={task._id} draggableId={task._id.toString()} index={index}>
       {(provided) => (
         <form
           onSubmit={handleEdit}

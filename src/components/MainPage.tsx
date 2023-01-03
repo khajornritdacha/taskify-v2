@@ -14,7 +14,7 @@ const MainPage = () => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { logout, getToken, isLoggedIn } = useAuth();
-  const { addData, refreshData } = useData();
+  const { addData, refreshData, setTodos, todos } = useData();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -35,7 +35,8 @@ const MainPage = () => {
     event.preventDefault();
     if (!todo) return;
     setIsSubmitting(true);
-    await addData(todo);
+    // await addData(todo);
+    setTodos([...todos, { todoText: todo, _id: Date.now() }]);
     setTodo('');
     setIsSubmitting(false);
   };

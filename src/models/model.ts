@@ -1,7 +1,7 @@
 export interface Todo {
   todoText: string;
-  _id: string;
-  __v: number;
+  _id: string | number;
+  __v?: number;
 }
 
 export interface ErrorDto {
