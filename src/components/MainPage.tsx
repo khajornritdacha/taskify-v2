@@ -8,13 +8,21 @@ import { useAuth } from '../providers/AuthProvider';
 import InputBox from './InputBox';
 import Task from './Task';
 import BtnIcon from './BtnIcon';
+import { onDragEnd } from '../utils/onDragEnd';
 
 const MainPage = () => {
   const [todo, setTodo] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { logout, getToken, isLoggedIn } = useAuth();
-  const { addData, refreshData, setTodos, todos } = useData();
+  const {
+    completedTodos,
+    setCompletedTodos,
+    addData,
+    refreshData,
+    setTodos,
+    todos,
+  } = useData();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -46,44 +54,23 @@ const MainPage = () => {
     await refreshData();
   };
 
-  // Todo: Migrate onDragEnd to its own file
-  const onDragEnd = (result: DropResult) => {
-    // const { source, destination } = result;
-    // if (destination === null) {
-    //   return;
-    // }
-    // if (
-    //   destination?.droppableId === source.droppableId &&
-    //   destination?.index === source.index
-    // ) {
-    //   return;
-    // }
-    // let tmp: string = '',
-    //   currentTodos = [...todos],
-    //   currentCompletedTodos = [...completedTodos];
-    // if (source.droppableId === 'UnCompletedTodosList') {
-    //   tmp = currentTodos[source.index];
-    //   currentTodos.splice(source.index, 1);
-    // } else {
-    //   tmp = currentCompletedTodos[source.index];
-    //   currentCompletedTodos.splice(source.index, 1);
-    // }
-    // if (destination?.droppableId === 'UnCompletedTodosList') {
-    //   currentTodos.splice(destination.index, 0, tmp);
-    // } else if (destination?.droppableId === 'CompletedTodosList') {
-    //   currentCompletedTodos.splice(destination.index, 0, tmp);
-    // }
-    // setTodos(currentTodos);
-    // setCompletedTodos(currentCompletedTodos);
-  };
-
   console.log('Loggedin status: ', isLoggedIn);
 
   return (
     <>
       {!isLoading ? (
         <>
-          <DragDropContext onDragEnd={onDragEnd}>
+          <DragDropContext
+            onDragEnd={(result) =>
+              onDragEnd(
+                result,
+                todos,
+                setTodos,
+                completedTodos,
+                setCompletedTodos
+              )
+            }
+          >
             <InputBox
               todo={todo}
               setTodo={setTodo}
