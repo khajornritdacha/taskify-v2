@@ -88,7 +88,7 @@ const RegisterPage = () => {
           onChange={(e) => setConPassword(e.target.value)}
         />
         <button
-          className="mx-auto w-[50%] rounded-full bg-ghost-white py-4 text-xl hover:scale-[1.1]"
+          className="mx-auto w-[50%] rounded-full bg-ghost-white py-4 text-xl hover:scale-[1.1] disabled:bg-slate-400"
           disabled={isSubmitting}
         >
           Sign Up!
