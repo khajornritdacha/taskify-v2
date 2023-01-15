@@ -1,10 +1,11 @@
-import { createContext, ReactNode, useState } from 'react';
+import { createContext, ReactNode, useState, useEffect } from 'react';
 import { Todo } from '../models/model';
 import { IGetResponse } from '../models/apiModel';
 import { privateApi } from '../utils/axios';
 import axios, { AxiosError } from 'axios';
 import { ErrorDto } from '../models/model';
 import { readLocalData } from '../utils/localData';
+import { useAuth } from './AuthProvider';
 
 export const DataContext = createContext<IDataContext | null>(null);
 
@@ -27,7 +28,12 @@ const DataProvider = (props: DataProviderProps) => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [completedTodos, setCompletedTodos] = useState<Todo[]>([]);
   const { children } = props;
+  const { isLoggedIn } = useAuth();
   const token = localStorage.getItem('token');
+
+  useEffect(() => {
+    refreshData();
+  }, [isLoggedIn]);
 
   const refreshData = async () => {
     if (!token) {
