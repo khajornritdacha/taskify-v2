@@ -1,6 +1,6 @@
 import { DropResult } from 'react-beautiful-dnd';
 import { Todo, ErrorDto } from '../models/model';
-import { api } from './axios';
+import { privateApi } from './axios';
 import axios, { AxiosError } from 'axios';
 import { saveLocalData } from './localData';
 
@@ -40,7 +40,7 @@ export const onDragEnd = async (
 
   if (isLoggedIn) {
     try {
-      const res = await api.put(`/api/todos`, {
+      const res = await privateApi.put(`/api/todos`, {
         todos: currentTodos,
         toRemoves: currentCompletedTodos,
       });

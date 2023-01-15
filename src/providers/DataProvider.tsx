@@ -1,7 +1,7 @@
 import { createContext, ReactNode, useState } from 'react';
 import { Todo } from '../models/model';
 import { IGetResponse } from '../models/apiModel';
-import { api } from '../utils/axios';
+import { privateApi } from '../utils/axios';
 import axios, { AxiosError } from 'axios';
 import { ErrorDto } from '../models/model';
 import { readLocalData } from '../utils/localData';
@@ -38,7 +38,7 @@ const DataProvider = (props: DataProviderProps) => {
     }
 
     try {
-      const res = await api.get<IGetResponse>('/api/todos');
+      const res = await privateApi.get<IGetResponse>('/api/todos');
       setTodos(res.data?.todos);
       setCompletedTodos(res.data?.toRemoves);
     } catch (err) {
@@ -57,7 +57,7 @@ const DataProvider = (props: DataProviderProps) => {
   const addTask = async (todo: string, isDone: boolean = false) => {
     console.log(isDone);
     try {
-      const res = await api.post('/api/todos', {
+      const res = await privateApi.post('/api/todos', {
         todoText: todo,
         isDone,
       });
@@ -75,7 +75,7 @@ const DataProvider = (props: DataProviderProps) => {
 
   const editSingleTask = async (todoText: string, id: number | string) => {
     try {
-      const res = await api.put(`/api/todos/${id}`, {
+      const res = await privateApi.put(`/api/todos/${id}`, {
         todoText: todoText,
       });
       console.log('Edit single task: ', res);
@@ -92,7 +92,7 @@ const DataProvider = (props: DataProviderProps) => {
 
   const deleteTask = async (id: number | string) => {
     try {
-      const res = api.delete(`/api/todos/${id}`);
+      const res = await privateApi.delete(`/api/todos/${id}`);
       console.log('Delete single task: ', res);
       await refreshData();
     } catch (err) {
