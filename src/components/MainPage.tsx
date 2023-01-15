@@ -9,6 +9,7 @@ import InputBox from './InputBox';
 import Task from './Task';
 import BtnIcon from './BtnIcon';
 import { onDragEnd } from '../utils/onDragEnd';
+import toast from 'react-hot-toast';
 
 const MainPage = () => {
   const [todo, setTodo] = useState<string>('');
@@ -41,9 +42,22 @@ const MainPage = () => {
   const handleAdd = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!todo || isSubmitting) return;
-    setIsSubmitting(true);
-    // await addData(todo);
-    setTodos([...todos, { todoText: todo, _id: Date.now() }]);
+    if (!isLoggedIn) {
+      setTodos([...todos, { todoText: todo, _id: Date.now() }]);
+    } else {
+      const toastId = toast.loading('Adding data');
+      try {
+        setIsSubmitting(true);
+        await addData(todo);
+        toast.success('Add success', {
+          id: toastId,
+        });
+      } catch (err) {
+        toast.error('Add data failed', {
+          id: toastId,
+        });
+      }
+    }
     setTodo('');
     setIsSubmitting(false);
   };

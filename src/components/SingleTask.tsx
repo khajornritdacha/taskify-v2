@@ -5,6 +5,7 @@ import { MdDone, MdClear } from 'react-icons/md';
 import { Todo } from '../models/model';
 import useData from '../hooks/useData';
 import { useAuth } from '../providers/AuthProvider';
+import toast from 'react-hot-toast';
 
 interface Props {
   index: number;
@@ -50,6 +51,7 @@ const SingleTask: React.FC<Props> = ({ index, task, isCompleted }) => {
     event.preventDefault();
 
     if (isSubmitting) return;
+
     setIsSubmitting(true);
 
     if (!isLoggedIn) {
@@ -64,11 +66,19 @@ const SingleTask: React.FC<Props> = ({ index, task, isCompleted }) => {
       setTodos(currentTodos);
       setCompletedTodos(currentCompletedTodos);
     } else {
+      const toastId = toast.loading('Editing data');
       try {
         if (!inputRef.current) throw new Error('No input ref');
         const todoText = inputRef.current?.value;
         await editSingleTask(todoText, task._id);
-      } catch (err) {}
+        toast.success('Edit success', {
+          id: toastId,
+        });
+      } catch (err) {
+        toast.error('Edit data failed', {
+          id: toastId,
+        });
+      }
     }
     setIsSubmitting(false);
     setIsEditing(false);
