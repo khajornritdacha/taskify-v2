@@ -18,8 +18,14 @@ const SingleTask: React.FC<Props> = ({ index, task, isCompleted }) => {
   const [editingTodo, setEditingTodo] = useState<Todo>(task);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { isLoggedIn } = useAuth();
-  const { todos, setTodos, completedTodos, setCompletedTodos, editSingleTask } =
-    useData();
+  const {
+    todos,
+    setTodos,
+    completedTodos,
+    setCompletedTodos,
+    editSingleTask,
+    deleteTask,
+  } = useData();
 
   const handleToggleDone = () => {
     let currentTodos = [...todos],
@@ -35,16 +41,34 @@ const SingleTask: React.FC<Props> = ({ index, task, isCompleted }) => {
     setCompletedTodos(currentCompletedTodos);
   };
 
-  const handleDelete = () => {
-    let currentTodos = [...todos],
-      currentCompletedTodos = [...completedTodos];
-    if (isCompleted == true) {
-      currentCompletedTodos.splice(currentCompletedTodos.indexOf(task), 1);
+  const handleDelete = async () => {
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+
+    if (!isLoggedIn) {
+      let currentTodos = [...todos],
+        currentCompletedTodos = [...completedTodos];
+      if (isCompleted == true) {
+        currentCompletedTodos.splice(currentCompletedTodos.indexOf(task), 1);
+      } else {
+        currentTodos.splice(currentTodos.indexOf(task), 1);
+      }
+      setTodos(currentTodos);
+      setCompletedTodos(currentCompletedTodos);
     } else {
-      currentTodos.splice(currentTodos.indexOf(task), 1);
+      const toastId = toast.loading('Deleting data');
+      try {
+        await deleteTask(task._id);
+        toast.success('Delete success', {
+          id: toastId,
+        });
+      } catch (err) {
+        toast.error('Delete data failed', {
+          id: toastId,
+        });
+      }
     }
-    setTodos(currentTodos);
-    setCompletedTodos(currentCompletedTodos);
   };
 
   const handleEdit = async (event: React.FormEvent) => {

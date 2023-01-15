@@ -20,6 +20,7 @@ interface IDataContext {
   refreshData: () => Promise<void>;
   addData: (todo: string) => Promise<void>;
   editSingleTask: (todoText: string, id: number | string) => Promise<void>;
+  deleteTask: (id: number | string) => Promise<void>;
 }
 
 const DataProvider = (props: DataProviderProps) => {
@@ -83,6 +84,21 @@ const DataProvider = (props: DataProviderProps) => {
     }
   };
 
+  const deleteTask = async (id: number | string) => {
+    try {
+      const res = api.delete(`/api/todos/${id}`);
+      console.log('Delete single task: ', res);
+      await refreshData();
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        const { response } = err as AxiosError<ErrorDto>;
+        const message = response?.data.message;
+        if (message) throw new Error(message);
+      }
+      throw new Error('Unknown Error');
+    }
+  };
+
   return (
     <DataContext.Provider
       value={{
@@ -93,6 +109,7 @@ const DataProvider = (props: DataProviderProps) => {
         refreshData,
         addData,
         editSingleTask,
+        deleteTask,
       }}
     >
       {children}
