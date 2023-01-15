@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import { useNavigate } from 'react-router-dom';
 
+import { saveLocalData } from '../utils/localData';
 import { BiLogInCircle, BiLogOutCircle } from 'react-icons/bi';
 import useData from '../hooks/useData';
 import { useAuth } from '../providers/AuthProvider';
@@ -43,7 +44,9 @@ const MainPage = () => {
     event.preventDefault();
     if (!todo || isSubmitting) return;
     if (!isLoggedIn) {
+      const newTodo = [...todos, { todoText: todo, _id: Date.now() }];
       setTodos([...todos, { todoText: todo, _id: Date.now() }]);
+      saveLocalData(newTodo, completedTodos);
     } else {
       const toastId = toast.loading('Adding data');
       try {

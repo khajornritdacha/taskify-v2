@@ -6,6 +6,7 @@ import { Todo } from '../models/model';
 import useData from '../hooks/useData';
 import { useAuth } from '../providers/AuthProvider';
 import toast from 'react-hot-toast';
+import { saveLocalData } from '../utils/localData';
 
 interface Props {
   index: number;
@@ -43,6 +44,7 @@ const SingleTask: React.FC<Props> = ({ index, task, isCompleted }) => {
         currentTodos.splice(currentTodos.indexOf(task), 1);
         currentCompletedTodos.push(task);
       }
+      saveLocalData(currentTodos, currentCompletedTodos);
       setTodos(currentTodos);
       setCompletedTodos(currentCompletedTodos);
     } else {
@@ -74,6 +76,7 @@ const SingleTask: React.FC<Props> = ({ index, task, isCompleted }) => {
       } else {
         currentTodos.splice(currentTodos.indexOf(task), 1);
       }
+      saveLocalData(currentTodos, currentCompletedTodos);
       setTodos(currentTodos);
       setCompletedTodos(currentCompletedTodos);
     } else {
@@ -107,6 +110,7 @@ const SingleTask: React.FC<Props> = ({ index, task, isCompleted }) => {
       } else {
         currentTodos[currentTodos.indexOf(task)] = editingTodo;
       }
+      saveLocalData(currentTodos, currentCompletedTodos);
       setTodos(currentTodos);
       setCompletedTodos(currentCompletedTodos);
     } else {

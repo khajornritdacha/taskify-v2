@@ -5,6 +5,7 @@ import { useAuth } from './AuthProvider';
 import { api } from '../utils/axios';
 import axios, { AxiosError } from 'axios';
 import { ErrorDto } from '../models/model';
+import { readLocalData } from '../utils/localData';
 
 export const DataContext = createContext<IDataContext | null>(null);
 
@@ -27,12 +28,18 @@ const DataProvider = (props: DataProviderProps) => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [completedTodos, setCompletedTodos] = useState<Todo[]>([]);
   // const privateApi = usePrivateApi();
-  const { token, getToken } = useAuth();
+  const { isLoggedIn } = useAuth();
   const { children } = props;
 
   const refreshData = async () => {
+    if (!isLoggedIn) {
+      const { localTodos, localCompletedTodos } = readLocalData();
+      setTodos(localTodos);
+      setCompletedTodos(localCompletedTodos);
+      return;
+    }
+
     try {
-      console.log('Send get request');
       const res = await api.get<IGetResponse>('/api/todos');
       setTodos(res.data?.todos);
       setCompletedTodos(res.data?.toRemoves);

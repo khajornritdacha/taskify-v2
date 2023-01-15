@@ -2,6 +2,7 @@ import { DropResult } from 'react-beautiful-dnd';
 import { Todo, ErrorDto } from '../models/model';
 import { api } from './axios';
 import axios, { AxiosError } from 'axios';
+import { saveLocalData } from './localData';
 
 export const onDragEnd = async (
   result: DropResult,
@@ -53,6 +54,7 @@ export const onDragEnd = async (
       throw new Error('Unknown Error');
     }
   } else {
+    saveLocalData(currentTodos, currentCompletedTodos);
     setTodos(currentTodos);
     setCompletedTodos(currentCompletedTodos);
   }
