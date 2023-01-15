@@ -116,6 +116,15 @@ const MainPage = () => {
     <>
       {!isLoading ? (
         <>
+          {isLoggedIn ? (
+            <h1 className="absolute right-[5%] top-[5%] text-3xl text-green-300">
+              Online Mode
+            </h1>
+          ) : (
+            <h1 className="absolute right-[5%] top-[5%] text-3xl text-red-300">
+              Offline Mode
+            </h1>
+          )}
           <DragDropContext
             onDragEnd={(result) => {
               handleDrag(result);
