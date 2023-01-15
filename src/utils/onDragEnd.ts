@@ -1,12 +1,15 @@
 import { DropResult } from 'react-beautiful-dnd';
-import { Todo } from '../models/model';
+import { Todo, ErrorDto } from '../models/model';
+import { api } from './axios';
+import axios, { AxiosError } from 'axios';
 
-export const onDragEnd = (
+export const onDragEnd = async (
   result: DropResult,
   todos: Todo[],
   setTodos: React.Dispatch<React.SetStateAction<Todo[]>>,
   completedTodos: Todo[],
-  setCompletedTodos: React.Dispatch<React.SetStateAction<Todo[]>>
+  setCompletedTodos: React.Dispatch<React.SetStateAction<Todo[]>>,
+  isLoggedIn: boolean
 ) => {
   const { source, destination } = result;
   if (destination === null) {
@@ -33,6 +36,24 @@ export const onDragEnd = (
   } else if (destination?.droppableId === 'CompletedTodosList') {
     currentCompletedTodos.splice(destination.index, 0, tmp);
   }
-  setTodos(currentTodos);
-  setCompletedTodos(currentCompletedTodos);
+
+  if (isLoggedIn) {
+    try {
+      const res = await api.put(`/api/todos`, {
+        todos: currentTodos,
+        toRemoves: currentCompletedTodos,
+      });
+      console.log(res);
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        const { response } = err as AxiosError<ErrorDto>;
+        const message = response?.data.message;
+        if (message) throw new Error(message);
+      }
+      throw new Error('Unknown Error');
+    }
+  } else {
+    setTodos(currentTodos);
+    setCompletedTodos(currentCompletedTodos);
+  }
 };

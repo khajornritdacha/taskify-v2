@@ -62,27 +62,44 @@ const MainPage = () => {
     setIsSubmitting(false);
   };
 
+  const handleDrag = async (result: DropResult) => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    const toastId = toast.loading('Adding data');
+    try {
+      await onDragEnd(
+        result,
+        todos,
+        setTodos,
+        completedTodos,
+        setCompletedTodos,
+        isLoggedIn
+      );
+      toast.success('Move success', {
+        id: toastId,
+      });
+      await refreshData();
+    } catch (err) {
+      toast.error('Move failed', {
+        id: toastId,
+      });
+    }
+    setIsSubmitting(false);
+  };
+
   const handleLogout = async () => {
     await logout();
     await refreshData();
   };
-
-  console.log('Loggedin status: ', isLoggedIn);
 
   return (
     <>
       {!isLoading ? (
         <>
           <DragDropContext
-            onDragEnd={(result) =>
-              onDragEnd(
-                result,
-                todos,
-                setTodos,
-                completedTodos,
-                setCompletedTodos
-              )
-            }
+            onDragEnd={(result) => {
+              handleDrag(result);
+            }}
           >
             <InputBox
               todo={todo}
