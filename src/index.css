@@ -6,3 +6,9 @@
     font-family: 'Neucha';
     src: url('./assets/fonts/Neucha-Regular.ttf');
 }
+
+@layer {
+    .container {
+        @apply flex w-[95%] mt-[10px] justify-between items-start;
+    }
+}

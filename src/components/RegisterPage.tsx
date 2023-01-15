@@ -1,16 +1,56 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, Navigate } from 'react-router-dom';
+import { api } from '../utils/axios';
+import axios from 'axios';
+import { useAuth } from '../providers/AuthProvider';
+import toast from 'react-hot-toast';
 
 const RegisterPage = () => {
+  const navigate = useNavigate();
+  const { isLoggedIn } = useAuth();
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [conPassword, setConPassword] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     console.log(email, password, conPassword);
+
+    if (isSubmitting) return;
+
+    if (password !== conPassword) {
+      toast.error('Password does not match');
+      return;
+    }
+
+    setIsSubmitting(true);
+    const toastId = toast.loading('Signing up...');
+    try {
+      const response = await api.post('/auth/register', {
+        email,
+        password,
+      });
+
+      toast.success('Sign up success', {
+        id: toastId,
+      });
+
+      navigate('/login');
+    } catch (err) {
+      let message = 'Unknown Error';
+      if (axios.isAxiosError(err)) {
+        const { response } = err;
+        message = response?.data?.message && response.data.message;
+      }
+      toast.error(message, {
+        id: toastId,
+      });
+    }
+    setIsSubmitting(false);
   };
 
+  if (isLoggedIn) return <Navigate to="/" />;
   return (
     <>
       <h1 className="mt-[2rem] self-center text-3xl font-bold text-ghost-white">
@@ -47,7 +87,10 @@ const RegisterPage = () => {
           value={conPassword}
           onChange={(e) => setConPassword(e.target.value)}
         />
-        <button className="mx-auto w-[50%] rounded-full bg-ghost-white py-4 text-xl hover:scale-[1.1]">
+        <button
+          className="mx-auto w-[50%] rounded-full bg-ghost-white py-4 text-xl hover:scale-[1.1] disabled:bg-slate-400"
+          disabled={isSubmitting}
+        >
           Sign Up!
         </button>
       </form>

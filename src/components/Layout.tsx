@@ -1,6 +1,6 @@
 import { Outlet, Link } from 'react-router-dom';
 
-const NavBtn = () => {
+const Layout = () => {
   return (
     <main className="flex min-h-screen flex-col bg-bright-navy-blue font-neucha">
       <Link
@@ -10,14 +10,8 @@ const NavBtn = () => {
         Taskify V2
       </Link>
       <Outlet />
-      <Link
-        to="/login"
-        className="fixed right-[2vw] bottom-[5vh] h-[4rem] w-[4rem] rounded-full bg-ghost-white text-[4rem]"
-      >
-        +
-      </Link>
     </main>
   );
 };
 
-export default NavBtn;
+export default Layout;

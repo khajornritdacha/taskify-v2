@@ -1,15 +1,41 @@
+// Todo: Fix why isloggedIn is not true when user already logged in
+
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { useAuth } from '../providers/AuthProvider';
+import toast from 'react-hot-toast';
 
 const LoginPage = () => {
+  const navigate = useNavigate();
+  const { login, isLoggedIn } = useAuth();
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    console.log(email, password);
+
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+    const toastId = toast.loading('Logging In...');
+    try {
+      await login(email, password);
+      toast.success('Login success', {
+        id: toastId,
+      });
+      navigate('/');
+    } catch (err) {
+      if (err instanceof Error) {
+        toast.error(err.message, {
+          id: toastId,
+        });
+      }
+    }
+    setIsSubmitting(false);
   };
 
+  if (isLoggedIn) return <Navigate to="/" />;
   return (
     <>
       <h1 className="mt-[2rem] self-center text-3xl font-bold text-ghost-white">
@@ -37,7 +63,10 @@ const LoginPage = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <button className="mx-auto w-[50%] rounded-full bg-ghost-white py-4 text-xl hover:scale-[1.1]">
+        <button
+          className="mx-auto w-[50%] rounded-full bg-ghost-white py-4 text-xl hover:scale-[1.1] disabled:bg-slate-400"
+          disabled={isSubmitting}
+        >
           Login!
         </button>
       </form>
