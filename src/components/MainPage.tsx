@@ -29,7 +29,6 @@ const MainPage = () => {
     const initializeLogin = async () => {
       setIsLoading(true);
       try {
-        await getToken();
         await refreshData();
       } catch (err) {
         console.log('Load data fail');
