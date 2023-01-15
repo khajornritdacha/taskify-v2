@@ -40,7 +40,7 @@ const MainPage = () => {
 
   const handleAdd = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (!todo) return;
+    if (!todo || isSubmitting) return;
     setIsSubmitting(true);
     // await addData(todo);
     setTodos([...todos, { todoText: todo, _id: Date.now() }]);
