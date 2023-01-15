@@ -4,6 +4,7 @@ import { AiFillDelete, AiFillEdit } from 'react-icons/ai';
 import { MdDone, MdClear } from 'react-icons/md';
 import { Todo } from '../models/model';
 import useData from '../hooks/useData';
+import { useAuth } from '../providers/AuthProvider';
 
 interface Props {
   index: number;
@@ -14,7 +15,10 @@ interface Props {
 const SingleTask: React.FC<Props> = ({ index, task, isCompleted }) => {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [editingTodo, setEditingTodo] = useState<Todo>(task);
-  const { todos, setTodos, completedTodos, setCompletedTodos } = useData();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { isLoggedIn } = useAuth();
+  const { todos, setTodos, completedTodos, setCompletedTodos, editSingleTask } =
+    useData();
 
   const handleToggleDone = () => {
     let currentTodos = [...todos],
@@ -42,18 +46,32 @@ const SingleTask: React.FC<Props> = ({ index, task, isCompleted }) => {
     setCompletedTodos(currentCompletedTodos);
   };
 
-  const handleEdit = (event: React.FormEvent) => {
+  const handleEdit = async (event: React.FormEvent) => {
     event.preventDefault();
-    let currentTodos = [...todos],
-      currentCompletedTodos = [...completedTodos];
-    if (isCompleted == true) {
-      currentCompletedTodos[currentCompletedTodos.indexOf(task)] = editingTodo;
+
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+
+    if (!isLoggedIn) {
+      let currentTodos = [...todos],
+        currentCompletedTodos = [...completedTodos];
+      if (isCompleted === true) {
+        currentCompletedTodos[currentCompletedTodos.indexOf(task)] =
+          editingTodo;
+      } else {
+        currentTodos[currentTodos.indexOf(task)] = editingTodo;
+      }
+      setTodos(currentTodos);
+      setCompletedTodos(currentCompletedTodos);
     } else {
-      currentTodos[currentTodos.indexOf(task)] = editingTodo;
+      try {
+        if (!inputRef.current) throw new Error('No input ref');
+        const todoText = inputRef.current?.value;
+        await editSingleTask(todoText, task._id);
+      } catch (err) {}
     }
+    setIsSubmitting(false);
     setIsEditing(false);
-    setTodos(currentTodos);
-    setCompletedTodos(currentCompletedTodos);
   };
 
   const inputRef = useRef<HTMLInputElement>(null);

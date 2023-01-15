@@ -19,6 +19,7 @@ interface IDataContext {
   setCompletedTodos: React.Dispatch<React.SetStateAction<Todo[]>>;
   refreshData: () => Promise<void>;
   addData: (todo: string) => Promise<void>;
+  editSingleTask: (todoText: string, id: number | string) => Promise<void>;
 }
 
 const DataProvider = (props: DataProviderProps) => {
@@ -30,6 +31,7 @@ const DataProvider = (props: DataProviderProps) => {
 
   const refreshData = async () => {
     try {
+      console.log('Send get request');
       const res = await api.get<IGetResponse>('/api/todos');
       setTodos(res.data?.todos);
       setCompletedTodos(res.data?.toRemoves);
@@ -64,6 +66,23 @@ const DataProvider = (props: DataProviderProps) => {
     }
   };
 
+  const editSingleTask = async (todoText: string, id: number | string) => {
+    try {
+      const res = await api.put(`/api/todos/${id}`, {
+        todoText: todoText,
+      });
+      console.log('Edit single task: ', res);
+      await refreshData();
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        const { response } = err as AxiosError<ErrorDto>;
+        const message = response?.data.message;
+        if (message) throw new Error(message);
+      }
+      throw new Error('Unknown Error');
+    }
+  };
+
   return (
     <DataContext.Provider
       value={{
@@ -73,6 +92,7 @@ const DataProvider = (props: DataProviderProps) => {
         setCompletedTodos,
         refreshData,
         addData,
+        editSingleTask,
       }}
     >
       {children}
