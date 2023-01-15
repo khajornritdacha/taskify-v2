@@ -25,20 +25,40 @@ const SingleTask: React.FC<Props> = ({ index, task, isCompleted }) => {
     setCompletedTodos,
     editSingleTask,
     deleteTask,
+    addTask,
   } = useData();
 
-  const handleToggleDone = () => {
-    let currentTodos = [...todos],
-      currentCompletedTodos = [...completedTodos];
-    if (isCompleted == true) {
-      currentCompletedTodos.splice(currentCompletedTodos.indexOf(task), 1);
-      currentTodos.push(task);
+  const handleToggleDone = async () => {
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+
+    if (!isLoggedIn) {
+      let currentTodos = [...todos],
+        currentCompletedTodos = [...completedTodos];
+      if (isCompleted == true) {
+        currentCompletedTodos.splice(currentCompletedTodos.indexOf(task), 1);
+        currentTodos.push(task);
+      } else {
+        currentTodos.splice(currentTodos.indexOf(task), 1);
+        currentCompletedTodos.push(task);
+      }
+      setTodos(currentTodos);
+      setCompletedTodos(currentCompletedTodos);
     } else {
-      currentTodos.splice(currentTodos.indexOf(task), 1);
-      currentCompletedTodos.push(task);
+      const toastId = toast.loading('Moving data');
+      try {
+        await deleteTask(task._id);
+        await addTask(task.todoText, !isCompleted);
+        toast.success('Move success', {
+          id: toastId,
+        });
+      } catch (err) {
+        toast.error('Move data failed', {
+          id: toastId,
+        });
+      }
     }
-    setTodos(currentTodos);
-    setCompletedTodos(currentCompletedTodos);
   };
 
   const handleDelete = async () => {
