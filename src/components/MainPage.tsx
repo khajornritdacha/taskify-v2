@@ -3,20 +3,20 @@ import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import { useNavigate } from 'react-router-dom';
 
 import { saveLocalData } from '../utils/localData';
-import { BiLogInCircle, BiLogOutCircle } from 'react-icons/bi';
 import useData from '../hooks/useData';
 import { useAuth } from '../providers/AuthProvider';
 import InputBox from './InputBox';
 import Task from './Task';
-import BtnIcon from './BtnIcon';
 import { onDragEnd } from '../utils/onDragEnd';
 import toast from 'react-hot-toast';
+import LogInOut from './logInOut';
 
 const MainPage = () => {
   const [todo, setTodo] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { logout, getToken, isLoggedIn } = useAuth();
+  const [isLoggingOut, setIsloggingOut] = useState<boolean>(false);
+  const { logout, isLoggedIn } = useAuth();
   const {
     completedTodos,
     setCompletedTodos,
@@ -25,7 +25,6 @@ const MainPage = () => {
     setTodos,
     todos,
   } = useData();
-  const navigate = useNavigate();
 
   useEffect(() => {
     const initializeLogin = async () => {
@@ -91,8 +90,21 @@ const MainPage = () => {
   };
 
   const handleLogout = async () => {
-    await logout();
-    await refreshData();
+    if (isLoggingOut) return;
+    setIsloggingOut(true);
+    const toastId = toast.loading('Logging Out');
+    try {
+      await logout();
+      toast.success('Logout Success', {
+        id: toastId,
+      });
+      await refreshData();
+    } catch (err) {
+      toast.error('Logout failed', {
+        id: toastId,
+      });
+    }
+    setIsloggingOut(false);
   };
 
   return (
@@ -112,22 +124,7 @@ const MainPage = () => {
             />
             <Task />
           </DragDropContext>
-          <div className="group fixed right-[2vw] bottom-[5vh] flex items-center">
-            {!isLoggedIn ? (
-              <BtnIcon
-                Icon={BiLogInCircle}
-                text={'Log In'}
-                handleClick={() => navigate('/login')}
-              />
-            ) : (
-              <BtnIcon
-                Icon={BiLogOutCircle}
-                text={'Log out'}
-                handleClick={() => handleLogout()}
-                customClass="text-orange-red-crayola"
-              />
-            )}
-          </div>
+          <LogInOut handleLogout={handleLogout} isLoggingOut={isLoggingOut} />
         </>
       ) : (
         <h1 className="m-auto translate-x-[10%] self-center text-5xl text-ghost-white">
