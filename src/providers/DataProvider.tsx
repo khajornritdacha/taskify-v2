@@ -1,7 +1,6 @@
 import { createContext, ReactNode, useState } from 'react';
 import { Todo } from '../models/model';
 import { IGetResponse } from '../models/apiModel';
-import { useAuth } from './AuthProvider';
 import { api } from '../utils/axios';
 import axios, { AxiosError } from 'axios';
 import { ErrorDto } from '../models/model';
@@ -27,12 +26,11 @@ interface IDataContext {
 const DataProvider = (props: DataProviderProps) => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [completedTodos, setCompletedTodos] = useState<Todo[]>([]);
-  // const privateApi = usePrivateApi();
-  const { isLoggedIn } = useAuth();
   const { children } = props;
+  const token = localStorage.getItem('token');
 
   const refreshData = async () => {
-    if (!isLoggedIn) {
+    if (!token) {
       const { localTodos, localCompletedTodos } = readLocalData();
       setTodos(localTodos);
       setCompletedTodos(localCompletedTodos);

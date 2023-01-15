@@ -98,13 +98,18 @@ const MainPage = () => {
       toast.success('Logout Success', {
         id: toastId,
       });
-      await refreshData();
     } catch (err) {
       toast.error('Logout failed', {
         id: toastId,
       });
     }
     setIsloggingOut(false);
+
+    try {
+      await refreshData();
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (

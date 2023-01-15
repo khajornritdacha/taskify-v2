@@ -23,6 +23,7 @@ interface IAuthContext {
 }
 
 const AuthContext = createContext<IAuthContext | null>(null);
+const token = localStorage.getItem('token');
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -32,7 +33,8 @@ export const useAuth = () => {
 
 const AuthProvider = (props: AuthProviderProps) => {
   const { children } = props;
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const [isLoggedIn, setIsLoggedIn] = useState(!!token);
 
   const login = async (email: string, password: string) => {
     try {
@@ -58,8 +60,6 @@ const AuthProvider = (props: AuthProviderProps) => {
     // Todo: Remove refresh token when user logout
     try {
       const res = await api.post('/auth/logout');
-      localStorage.removeItem('token');
-      setIsLoggedIn(false);
     } catch (err) {
       console.log(err);
       // Todo Add notification
@@ -71,6 +71,8 @@ const AuthProvider = (props: AuthProviderProps) => {
         console.log('Something went wrong!');
       }
     }
+    localStorage.removeItem('token');
+    setIsLoggedIn(false);
   };
 
   return (
