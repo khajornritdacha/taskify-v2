@@ -31,20 +31,30 @@ privateApi.interceptors.request.use(
 privateApi.interceptors.response.use(
   (res: any) => res,
   async (err: any) => {
-    const prevRequest = err?.config;
-    const token = localStorage.getItem('token');
-    if (err.response.status === 403 && token) {
-      try {
-        const res = await privateApi.post(`/auth/token`);
-        const { accessToken } = res.data;
-        localStorage.setItem('token', accessToken);
-        prevRequest.headers['Authorization'] = `Bearer ${accessToken}`;
-        return privateApi(prevRequest);
-      } catch (err2) {
-        console.log(err2);
-        return Promise.reject(err2);
-      }
-    }
+    localStorage.removeItem('token');
+    window.location.href = '/logout';
     return Promise.reject(err);
   }
 );
+
+// Todo: Add refresh token handlers
+// privateApi.interceptors.response.use(
+//   (res: any) => res,
+//   async (err: any) => {
+//     const prevRequest = err?.config;
+//     const token = localStorage.getItem('token');
+//     if (err.response.status === 403 && token) {
+//       try {
+//         const res = await privateApi.post(`/auth/token`);
+//         const { accessToken } = res.data;
+//         localStorage.setItem('token', accessToken);
+//         prevRequest.headers['Authorization'] = `Bearer ${accessToken}`;
+//         return privateApi(prevRequest);
+//       } catch (err2) {
+//         console.log(err2);
+//         return Promise.reject(err2);
+//       }
+//     }
+//     return Promise.reject(err);
+//   }
+// );

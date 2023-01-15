@@ -7,6 +7,7 @@ import RegisterPage from './components/RegisterPage';
 import AuthProvider from './providers/AuthProvider';
 import DataProvider from './providers/DataProvider';
 import NotFoundPage from './components/NotFoundPage';
+import LogoutPage from './components/LogoutPage';
 
 export default function App() {
   return (
@@ -19,6 +20,7 @@ export default function App() {
 
               <Route path="login" element={<LoginPage />} />
               <Route path="register" element={<RegisterPage />} />
+              <Route path="logout" element={<LogoutPage />} />
 
               <Route path="*" element={<NotFoundPage />} />
             </Route>
