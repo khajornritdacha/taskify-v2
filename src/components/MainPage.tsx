@@ -19,7 +19,7 @@ const MainPage = () => {
   const {
     completedTodos,
     setCompletedTodos,
-    addData,
+    addTask,
     refreshData,
     setTodos,
     todos,
@@ -48,7 +48,7 @@ const MainPage = () => {
       const toastId = toast.loading('Adding data');
       try {
         setIsSubmitting(true);
-        await addData(todo);
+        await addTask(todo);
         toast.success('Add success', {
           id: toastId,
         });

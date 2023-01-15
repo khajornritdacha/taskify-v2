@@ -18,7 +18,7 @@ interface IDataContext {
   completedTodos: Todo[];
   setCompletedTodos: React.Dispatch<React.SetStateAction<Todo[]>>;
   refreshData: () => Promise<void>;
-  addData: (todo: string) => Promise<void>;
+  addTask: (todo: string, isDone?: boolean) => Promise<void>;
   editSingleTask: (todoText: string, id: number | string) => Promise<void>;
   deleteTask: (id: number | string) => Promise<void>;
 }
@@ -49,11 +49,12 @@ const DataProvider = (props: DataProviderProps) => {
     }
   };
 
-  const addData = async (todo: string) => {
+  const addTask = async (todo: string, isDone: boolean = false) => {
+    console.log(isDone);
     try {
       const res = await api.post('/api/todos', {
         todoText: todo,
-        isDone: false,
+        isDone,
       });
       console.log('Add data: ', res);
       await refreshData();
@@ -107,7 +108,7 @@ const DataProvider = (props: DataProviderProps) => {
         completedTodos,
         setCompletedTodos,
         refreshData,
-        addData,
+        addTask,
         editSingleTask,
         deleteTask,
       }}
